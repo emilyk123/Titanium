@@ -1,8 +1,11 @@
 # Used tutorial https://www.youtube.com/watch?v=2gABYM5M0ww&list=LL&index=5&t=2735s&ab_channel=DaFluffyPotato
 # How to create custom events: https://stackoverflow.com/questions/24475718/pygame-custom-event
+# How to create a timer: https://www.pygame.org/docs/ref/time.html#pygame.time.set_timer
+
 import sys
 import pygame
 from player import Player
+from tilemap import Tilemap
 
 class Game:
     def __init__(self):
@@ -10,6 +13,7 @@ class Game:
 
         # Create game window
         self.screen = pygame.display.set_mode((640, 480))
+        self.display = pygame.Surface((320, 240))
 
         # Create clock used to limit frame rate
         self.clock = pygame.time.Clock()
@@ -21,11 +25,14 @@ class Game:
         self.player_movement = [False, False, False, False]
         
         # Create player at position 50, 50
-        self.player = Player((50, 50))
+        self.player = Player((32, 32))
+
+        # Initialize the tilemap
+        self.tilemap = Tilemap()
     
     def run(self):
         # Every 1 second the player can move
-        pygame.time.set_timer(self.player_move_event, 1000)
+        pygame.time.set_timer(self.player_move_event, 300)
 
         while True:
             # Checks all key and mouse presses
@@ -71,10 +78,17 @@ class Game:
                         self.player_movement[3] = False
             
             # Recolor the background so it covers everything from the last frame
-            self.screen.fill((0, 0, 0))
+            self.display.fill((0, 0, 0))
+
+            # Add all of the tiles for the background
+            self.tilemap.render(self.display)
 
             # Draw the player at its current location to the screen
-            self.player.render(self.screen)
+            self.player.render(self.display)
+
+            # Blit the screen, display, with all of the sprites on to the screen
+            # The display is smaller than the screen so it scales up the size of everything in the display
+            self.screen.blit(pygame.transform.scale(self.display, self.screen.get_size()), (0, 0))
 
             # Updates the display to show all changes made to the game
             pygame.display.update()
