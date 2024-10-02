@@ -27,9 +27,14 @@ while True:
          if event.type == pygame.QUIT:
              pygame.quit()
              exit()
+
+    # set screen color to black
     screen.fill((0, 0, 0))
+    
+    # moves the rectangle
     mover.move()
     
+    # draws the rectangle and color red
     mover.draw(screen, "RED")     
     pygame.display.update()
     clock.tick(60)
