@@ -97,6 +97,10 @@ class Game:
 
             # Draw the player at its current location to the screen
             self.player.render(self.display)
+            
+            for tile in self.tilemap.tiles:
+                if self.tilemap.tiles[tile]['pos'][0] == self.player.position[0] and self.tilemap.tiles[tile]['pos'][1] == self.player.position[1]:
+                    print("water")
 
             # Blit the screen, display, with all of the sprites on to the screen
             # The display is smaller than the screen so it scales up the size of everything in the display

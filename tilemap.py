@@ -9,7 +9,7 @@ import pygame
 class Tilemap:
     def __init__(self, tile_size=16):
         # This will have all tiles with their type and location in a dictionary
-        self.tilemap = {}
+        self.tiles = {}
 
         # This is the width and height of the tile in pixels
         self.tile_size = tile_size
@@ -18,12 +18,12 @@ class Tilemap:
         for i in range(20):
             # (x, y) the tuple holds the location
             # since the y part of the location stays the same and the x changes, they are placed horizontally
-            self.tilemap[str(i) + ';5'] = {'pos': (i, 5)}
+            self.tiles[str(i) + ';5'] = {'pos': (i, 5)}
 
     def render(self, surface):
-        for loc in self.tilemap:
+        for loc in self.tiles:
             # Gets the value of the tilemap dictionary
-            tile = self.tilemap[loc]
+            tile = self.tiles[loc]
 
             # Finds the sprite for the water image
             image = pygame.image.load('sprites/water.png').convert()
