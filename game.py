@@ -6,28 +6,27 @@ import pygame
 from player import Player
 from object import MovingRectangle
 
-pygame.init() 
+class Game:
+    def __init__(self):
+        pygame.init() 
 
         screen_width = 640
         screen_height = 480
         # Create game window
         self.screen = pygame.display.set_mode((screen_width, screen_height))
-
         # Create clock used to limit frame rate
         self.clock = pygame.time.Clock()
-
         # Create custom event
         self.player_move_event = pygame.USEREVENT + 1
-
         # [Up, Left, Down, Right]
         self.player_movement = [False, False, False, False]
-        
+
         # Create player at position 50, 50
         self.player = Player((50, 50))
-        
+
         # instance 
-        mover = MovingRectangle(x=screen_width, y=200, width=500, height=60, speed=-5) 
-    
+        self.mover = MovingRectangle(x=screen_width, y=200, width=500, height=60, speed=-5) 
+
     def run(self):
         # Every 1 second the player can move
         pygame.time.set_timer(self.player_move_event, 1000)
@@ -75,14 +74,15 @@ pygame.init()
                     if event.key == pygame.K_d or event.key == pygame.K_RIGHT:
                         self.player_movement[3] = False
             
-            # moves the rectangle
-            mover.move()
-    
-            # draws the rectangle and color red
-            mover.draw(screen, "RED")
         
             # Recolor the background so it covers everything from the last frame
             self.screen.fill((0, 0, 0))
+            
+            # moves the rectangle
+            self.mover.move()
+    
+            # draws the rectangle and color red
+            self.mover.draw(self.screen, "RED")
 
             # Draw the player at its current location to the screen
             self.player.render(self.screen)
