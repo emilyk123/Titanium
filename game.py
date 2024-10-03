@@ -1,3 +1,4 @@
+
 # Used tutorial https://www.youtube.com/watch?v=2gABYM5M0ww&list=LL&index=5&t=2735s&ab_channel=DaFluffyPotato
 # How to create custom events: https://stackoverflow.com/questions/24475718/pygame-custom-event
 # How to create a timer: https://www.pygame.org/docs/ref/time.html#pygame.time.set_timer
@@ -6,30 +7,34 @@ import sys
 import pygame
 from player import Player
 from tilemap import Tilemap
+from object import MovingRectangle
 
 class Game:
     def __init__(self):
-        pygame.init()
+        pygame.init() 
 
+        screen_width = 640
+        screen_height = 480
         # Create game window
-        self.screen = pygame.display.set_mode((640, 480))
         self.display = pygame.Surface((320, 240))
 
+        self.screen = pygame.display.set_mode((screen_width, screen_height))
         # Create clock used to limit frame rate
         self.clock = pygame.time.Clock()
-
         # Create custom event
         self.player_move_event = pygame.USEREVENT + 1
-
         # [Up, Left, Down, Right]
         self.player_movement = [False, False, False, False]
-        
+
         # Create player at position 50, 50
         self.player = Player((32, 32))
 
         # Initialize the tilemap
         self.tilemap = Tilemap()
     
+        # instance 
+        self.mover = MovingRectangle(x=screen_width, y=200, width=512, height=32, speed=-5) 
+
     def run(self):
         # Every 1 second the player can move
         pygame.time.set_timer(self.player_move_event, 300)
@@ -77,11 +82,18 @@ class Game:
                     if event.key == pygame.K_d or event.key == pygame.K_RIGHT:
                         self.player_movement[3] = False
             
+        
             # Recolor the background so it covers everything from the last frame
             self.display.fill((0, 0, 0))
 
             # Add all of the tiles for the background
             self.tilemap.render(self.display)
+            
+            # moves the rectangle
+            self.mover.move()
+    
+            # draws the rectangle and color red
+            self.mover.draw(self.screen, "RED")
 
             # Draw the player at its current location to the screen
             self.player.render(self.display)
@@ -97,3 +109,4 @@ class Game:
             self.clock.tick(60)
 
 Game().run()
+
