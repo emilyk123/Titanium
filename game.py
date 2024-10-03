@@ -1,15 +1,17 @@
+
 # Used tutorial https://www.youtube.com/watch?v=2gABYM5M0ww&list=LL&index=5&t=2735s&ab_channel=DaFluffyPotato
 # How to create custom events: https://stackoverflow.com/questions/24475718/pygame-custom-event
 import sys
 import pygame
 from player import Player
+from object import MovingRectangle
 
-class Game:
-    def __init__(self):
-        pygame.init()
+pygame.init() 
 
+        screen_width = 640
+        screen_height = 480
         # Create game window
-        self.screen = pygame.display.set_mode((640, 480))
+        self.screen = pygame.display.set_mode((screen_width, screen_height))
 
         # Create clock used to limit frame rate
         self.clock = pygame.time.Clock()
@@ -22,6 +24,9 @@ class Game:
         
         # Create player at position 50, 50
         self.player = Player((50, 50))
+        
+        # instance 
+        mover = MovingRectangle(x=screen_width, y=200, width=500, height=60, speed=-5) 
     
     def run(self):
         # Every 1 second the player can move
@@ -70,6 +75,12 @@ class Game:
                     if event.key == pygame.K_d or event.key == pygame.K_RIGHT:
                         self.player_movement[3] = False
             
+            # moves the rectangle
+            mover.move()
+    
+            # draws the rectangle and color red
+            mover.draw(screen, "RED")
+        
             # Recolor the background so it covers everything from the last frame
             self.screen.fill((0, 0, 0))
 
@@ -83,3 +94,4 @@ class Game:
             self.clock.tick(60)
 
 Game().run()
+
