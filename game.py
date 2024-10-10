@@ -1,4 +1,3 @@
-
 # Used tutorial https://www.youtube.com/watch?v=2gABYM5M0ww&list=LL&index=5&t=2735s&ab_channel=DaFluffyPotato
 # How to create custom events: https://stackoverflow.com/questions/24475718/pygame-custom-event
 # How to create a timer: https://www.pygame.org/docs/ref/time.html#pygame.time.set_timer
@@ -15,8 +14,11 @@ class Game:
 
         screen_width = 640
         screen_height = 480
+
+        display_width = 320
+        display_height = 240
         # Create game window
-        self.display = pygame.Surface((320, 240))
+        self.display = pygame.Surface((display_width, display_height))
 
         self.screen = pygame.display.set_mode((screen_width, screen_height))
         # Create clock used to limit frame rate
@@ -26,18 +28,18 @@ class Game:
         # [Up, Left, Down, Right]
         self.player_movement = [False, False, False, False]
 
-        # Create player at position 50, 50
+        # Create player at position 32, 32
         self.player = Player((32, 32))
 
         # Initialize the tilemap
         self.tilemap = Tilemap()
     
         # instance 
-        self.mover = MovingRectangle(x=screen_width, y=200, width=512, height=32, speed=-5) 
+        self.mover = MovingRectangle(x=display_width, y=64, width=64, height=16, speed=-2) 
 
     def run(self):
-        # Every 1 second the player can move
-        pygame.time.set_timer(self.player_move_event, 300)
+        # Every 3 millisecond the player can move
+        pygame.time.set_timer(self.player_move_event, 200)
 
         while True:
             # Checks all key and mouse presses
@@ -81,7 +83,6 @@ class Game:
                         self.player_movement[2] = False
                     if event.key == pygame.K_d or event.key == pygame.K_RIGHT:
                         self.player_movement[3] = False
-            
         
             # Recolor the background so it covers everything from the last frame
             self.display.fill((0, 0, 0))
@@ -93,15 +94,11 @@ class Game:
             self.mover.move()
     
             # draws the rectangle and color red
-            self.mover.draw(self.screen, "RED")
+            self.mover.draw(self.display, "RED")
 
             # Draw the player at its current location to the screen
             self.player.render(self.display)
             
-            for tile in self.tilemap.tiles:
-                if self.tilemap.tiles[tile]['pos'][0] == self.player.position[0] and self.tilemap.tiles[tile]['pos'][1] == self.player.position[1]:
-                    print("water")
-
             # Blit the screen, display, with all of the sprites on to the screen
             # The display is smaller than the screen so it scales up the size of everything in the display
             self.screen.blit(pygame.transform.scale(self.display, self.screen.get_size()), (0, 0))
@@ -113,4 +110,3 @@ class Game:
             self.clock.tick(60)
 
 Game().run()
-

@@ -3,31 +3,35 @@
 # https://dafluffypotato.com/assets/pg_tutorial (03_player_tiles_physics)
 
 import os
-
+import json
 import pygame
 
 class Tilemap:
-    def __init__(self, tile_size=16):
+    def __init__(self, game, tile_size=16):
         # This will have all tiles with their type and location in a dictionary
         self.tiles = {}
+
+        self.game = game
+
+        self.tilemap = {}
 
         # This is the width and height of the tile in pixels
         self.tile_size = tile_size
 
-        # This is a loop that creates 20 tiles in a horizontal line
-        for i in range(20):
-            # (x, y) the tuple holds the location
-            # since the y part of the location stays the same and the x changes, they are placed horizontally
-            self.tiles[str(i) + ';5'] = {'pos': (i, 5)}
+    def save(self, path):
+        f = open(path, 'w')
+        json.dump({'tilemap': self.tilemap, 'tile_size': self.tile_size}, f)
+        f.close()
+    
+    def load(self, path):
+        f = open(path, 'r')
+        map_data = json.load(f)
+        f.close()
+
+        self.tilemap = map_data['tilemap']
+        self.tile_size = map_data['tile_size']
 
     def render(self, surface):
-        for loc in self.tiles:
-            # Gets the value of the tilemap dictionary
-            tile = self.tiles[loc]
-
-            # Finds the sprite for the water image
-            image = pygame.image.load('sprites/water.png').convert()
-
-            # Blit the image onto the surface
-            # Multiply the position by the tile_size to have the tiles placed next to each other and not overlapping
-            surface.blit(image, (tile['pos'][0] * self.tile_size, tile['pos'][1] * self.tile_size))
+        for loc in self.tilemap:
+            tile = self.tilemap[loc]
+            surface.blit(self.game.assets[tile['type']][tile['variant']], (tile['pos'][0] * self.tile_size, tile['pos'][1] * self.tile_size))
