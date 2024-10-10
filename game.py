@@ -1,31 +1,35 @@
-# Used tutorial https://www.youtube.com/watch?v=2gABYM5M0ww&list=LL&index=5&t=2735s&ab_channel=DaFluffyPotato
-# How to create custom events: https://stackoverflow.com/questions/24475718/pygame-custom-event
 import sys
 import pygame
 from player import Player
+from power import PowerUp
 
 class Game:
     def __init__(self):
         pygame.init()
 
+        screen_width = 640
+        screen_height = 480
         # Create game window
-        self.screen = pygame.display.set_mode((640, 480))
-
+        self.screen = pygame.display.set_mode((screen_width, screen_height))
         # Create clock used to limit frame rate
         self.clock = pygame.time.Clock()
-
-        # Create custom event
+        # Create custom events
         self.player_move_event = pygame.USEREVENT + 1
-
+        self.power_move_event = pygame.USEREVENT + 2
         # [Up, Left, Down, Right]
         self.player_movement = [False, False, False, False]
-        
+
         # Create player at position 50, 50
         self.player = Player((50, 50))
-    
+
+        # Create power-up with random positioning logic
+        self.power = PowerUp(screen_width, screen_height)
+
     def run(self):
-        # Every 1 second the player can move
+        # Set timer for player movement (every 1 second)
         pygame.time.set_timer(self.player_move_event, 1000)
+        # Set timer for randomizing power-up position (every 1 second)
+        pygame.time.set_timer(self.power_move_event, 1000)
 
         while True:
             # Checks all key and mouse presses
@@ -34,11 +38,15 @@ class Game:
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     sys.exit()
-                
+
                 # Allow player to move
                 if event.type == self.player_move_event:
                     self.player.can_move = True
-                
+
+                # Randomize power-up position every second
+                if event.type == self.power_move_event:
+                    self.power.randomize_position()
+
                 # Check for input with WASD or the arrow keys
                 if event.type == pygame.KEYDOWN:
                     # If timer has passed time limit, allow player input
@@ -51,7 +59,7 @@ class Game:
                             self.player_movement[2] = True
                         if event.key == pygame.K_d or event.key == pygame.K_RIGHT:
                             self.player_movement[3] = True
-                        
+
                         # Subtract player_movement[3] (Right) from player_movement[1] (Left) to get horizontal direction
                         # Subtract player_movement[2] (Down) from player_movement[0] (Up) to get vertical direction
                         self.player.move((self.player_movement[3] - self.player_movement[1], self.player_movement[2] - self.player_movement[0]))
@@ -69,16 +77,19 @@ class Game:
                         self.player_movement[2] = False
                     if event.key == pygame.K_d or event.key == pygame.K_RIGHT:
                         self.player_movement[3] = False
-            
+
             # Recolor the background so it covers everything from the last frame
             self.screen.fill((0, 0, 0))
+
+            # Draw power-up at random positions
+            self.power.draw(self.screen)
 
             # Draw the player at its current location to the screen
             self.player.render(self.screen)
 
             # Updates the display to show all changes made to the game
             pygame.display.update()
-            
+
             # Makes the game run at 60 frames per second
             self.clock.tick(60)
 
