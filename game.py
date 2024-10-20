@@ -32,7 +32,7 @@ class Game:
         self.player = Player((32, 32))
 
         # Initialize the tilemap
-        self.tilemap = Tilemap()
+        self.tilemap = Tilemap(self)
     
         # instance 
         self.mover = MovingRectangle(x=display_width, y=64, width=64, height=16, speed=-2) 
