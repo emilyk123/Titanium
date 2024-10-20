@@ -92,8 +92,15 @@ class Editor:
                 if tile_loc in self.tilemap.tilemap:
                     del self.tilemap.tilemap[tile_loc]
 
-            # This draws current_tile_img at the top left of the screen
-            self.display.blit(current_tile_img, (5, 5))
+            # Draws all of the tile options at top left screen
+            tiles_display_x_pos = 5
+            group_index = 0
+            for tile_group in self.tile_list:
+                for variants in self.assets[tile_group]:
+                    variants.set_alpha(100)
+                    self.display.blit(variants.copy(), (tiles_display_x_pos, 5))
+                    tiles_display_x_pos += 16
+                    group_index += 1
 
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
