@@ -59,6 +59,9 @@ class Editor:
         # Keeps track if the left shift button is pressed
         self.shift = False
 
+        # Keeps track of when user wants to select a new tile
+        self.select_new_tile = False
+
     def run(self):
         while True:
             # Create black background
@@ -92,15 +95,16 @@ class Editor:
                 if tile_loc in self.tilemap.tilemap:
                     del self.tilemap.tilemap[tile_loc]
 
-            # Draws all of the tile options at top left screen
-            tiles_display_x_pos = 5
-            group_index = 0
-            for tile_group in self.tile_list:
-                for variants in self.assets[tile_group]:
-                    variants.set_alpha(100)
-                    self.display.blit(variants.copy(), (tiles_display_x_pos, 5))
-                    tiles_display_x_pos += 16
-                    group_index += 1
+            if self.select_new_tile:
+                # Draws all of the tile options at top left screen
+                tiles_display_x_pos = 5
+                group_index = 0
+                for tile_group in self.tile_list:
+                    for variants in self.assets[tile_group]:
+                        variants.set_alpha(100)
+                        self.display.blit(variants.copy(), (tiles_display_x_pos, 5))
+                        tiles_display_x_pos += 16
+                        group_index += 1
 
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -138,13 +142,13 @@ class Editor:
                         self.right_clicking = False
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_LSHIFT:
-                        self.shift = True
+                        self.select_new_tile = True
                     # When the 's' button is pressed, everything currently drawn in the editor is saved in a json file
                     if event.key == pygame.K_s:
                         self.tilemap.save('map.json')
                 if event.type == pygame.KEYUP:
                     if event.key == pygame.K_LSHIFT:
-                        self.shift = False
+                        self.select_new_tile = False
 
             # Scale up the display to the screen size
             self.screen.blit(pygame.transform.scale(self.display, self.screen.get_size()), (0, 0))
