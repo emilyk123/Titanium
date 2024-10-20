@@ -63,9 +63,24 @@ class Editor:
         self.select_new_tile = False
 
         # Stores rects for display rects to if a mouse clicks one of them
-        self.display_rects = {}
+        self.display_rects = {0: [],
+                              1: []}
 
         self.mpos = pygame.mouse.get_pos()
+
+        self.display_variant = 0
+        
+        tiles_display_x_pos = 0
+        variant = 0
+
+        for tile_group in self.tile_list:
+            for variants in self.assets[tile_group]:
+                if tile_group == 'ground':
+                    self.display_rects[0].append({variant: pygame.Rect(tiles_display_x_pos * 2 / RENDER_SCALE, 0, 16, 16)})
+                else:
+                    self.display_rects[1].append({variant - len(self.assets[self.tile_list[0]]): pygame.Rect(tiles_display_x_pos * 2 / RENDER_SCALE, 0, 16, 16)})
+                variant += 1
+                tiles_display_x_pos += 16
 
     def run(self):
         while True:
@@ -104,15 +119,10 @@ class Editor:
             if self.select_new_tile:
                 # Draws all of the tile options at top left screen
                 tiles_display_x_pos = 0
-                group_index = 0
-                variant = 0
                 for tile_group in self.tile_list:
                     for variants in self.assets[tile_group]:
                         self.display.blit(variants.copy(), (tiles_display_x_pos, 0))
-                        self.display_rects[variant] = pygame.Rect(tiles_display_x_pos * 2 / RENDER_SCALE, 0, 16, 16)
                         tiles_display_x_pos += 16
-                        variant += 1
-                    group_index += 1
 
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -124,29 +134,20 @@ class Editor:
                         if not self.select_new_tile:
                             self.clicking = True
                         else:
-                            for variant in self.display_rects:
-                                if pygame.Rect.collidepoint(self.display_rects[variant], self.mpos):
-                                    print(variant)
+                            # Loop through the groups of sprites
+                            for group in self.display_rects:
+                                display_index = 0
+                                # Loop through the groups of variants in the group
+                                for variant in self.display_rects[group]:
+                                    # Loop through the dictonarys inside of the current group index, contains {variant_index: rect}
+                                    for variant_index in variant:
+                                        if pygame.Rect.collidepoint(variant[variant_index], self.mpos):
+                                            self.tile_variant = variant_index
+                                            self.tile_group = group
+                                display_index += 1
                     # Right mouse click
                     if event.button == 3:
                         self.right_clicking = True
-                    if self.shift:
-                        # Scroll mouse wheel up
-                        if event.button == 4:
-                            # This decreases the tile_variant so it goes to the previous tile variant. Uses % so it loops instead of having tile_group goes out of the range
-                            self.tile_variant = (self.tile_variant - 1) % len(self.assets[self.tile_list[self.tile_group]])
-                        # Scroll mouse wheel down
-                        if event.button == 5:
-                            # This increases the tile_variant so it goes to the next tile variant
-                            self.tile_variant = (self.tile_variant + 1) % len(self.assets[self.tile_list[self.tile_group]])
-                    else:
-                        if event.button == 4:
-                            self.tile_group = (self.tile_group - 1) % len(self.tile_list)
-                            # Go back to the first variant when switching groups
-                            self.tile_variant = 0
-                        if event.button == 5:
-                            self.tile_group = (self.tile_group + 1) % len(self.tile_list)
-                            self.tile_variant = 0
                 
                 if event.type == pygame.MOUSEBUTTONUP:
                     if event.button == 1:
