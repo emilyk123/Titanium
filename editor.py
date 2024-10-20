@@ -66,20 +66,28 @@ class Editor:
         self.display_rects = {0: [],
                               1: []}
 
+        # Stores the mouse's current position
         self.mpos = pygame.mouse.get_pos()
 
-        self.display_variant = 0
-        
+
+        # Loop used to create a dictionary of the display tiles that will help allow the user click the tile they want to draw with
+
+        # Stores local value for the current x value position for the display tiles 
         tiles_display_x_pos = 0
+        # Stores local value for the current variant
         variant = 0
 
+        # Loops through tile groups
         for tile_group in self.tile_list:
+            # Loops through variants in tile groups
             for variants in self.assets[tile_group]:
+                # If current tile group is ground, then append the tile to the display_rects
                 if tile_group == 'ground':
                     self.display_rects[0].append({variant: pygame.Rect(tiles_display_x_pos * 2 / RENDER_SCALE, 0, 16, 16)})
                 else:
                     self.display_rects[1].append({variant - len(self.assets[self.tile_list[0]]): pygame.Rect(tiles_display_x_pos * 2 / RENDER_SCALE, 0, 16, 16)})
                 variant += 1
+                # Update the next tile's position
                 tiles_display_x_pos += 16
 
     def run(self):
@@ -102,7 +110,7 @@ class Editor:
             # This calculates where the tile should go according to the mouse position and which part of the grid it is on
             tile_pos = (int(self.mpos[0] // self.tilemap.tile_size), int(self.mpos[1]) // self.tilemap.tile_size)
 
-            # This draws the current_tile_img to the screen
+            # Draws tile to screen where the mouse is if the user isn't selecting a new tile
             if not self.select_new_tile:
                 self.display.blit(current_tile_img, (tile_pos[0] * self.tilemap.tile_size, tile_pos[1] * self.tilemap.tile_size))
 
@@ -119,9 +127,13 @@ class Editor:
             if self.select_new_tile:
                 # Draws all of the tile options at top left screen
                 tiles_display_x_pos = 0
+                # Loop through tile groups
                 for tile_group in self.tile_list:
+                    # Loop through tile variants in the group
                     for variants in self.assets[tile_group]:
+                        # Draw the current tile to the screen
                         self.display.blit(variants.copy(), (tiles_display_x_pos, 0))
+                        # Update the next tile's position
                         tiles_display_x_pos += 16
 
             for event in pygame.event.get():
@@ -131,8 +143,10 @@ class Editor:
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     # Left mouse click
                     if event.button == 1:
+                        # If the player isn't selecting a new tile, allow them to draw again
                         if not self.select_new_tile:
                             self.clicking = True
+                        # Else, don't let them draw
                         else:
                             # Loop through the groups of sprites
                             for group in self.display_rects:
@@ -141,6 +155,7 @@ class Editor:
                                 for variant in self.display_rects[group]:
                                     # Loop through the dictonarys inside of the current group index, contains {variant_index: rect}
                                     for variant_index in variant:
+                                        # If the mouse is inside of a rect, then update the tile_variant and tile_group
                                         if pygame.Rect.collidepoint(variant[variant_index], self.mpos):
                                             self.tile_variant = variant_index
                                             self.tile_group = group
