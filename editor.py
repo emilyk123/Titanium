@@ -62,6 +62,11 @@ class Editor:
         # Keeps track of when user wants to select a new tile
         self.select_new_tile = False
 
+        # Stores rects for display rects to if a mouse clicks one of them
+        self.display_rects = {}
+
+        self.mpos = pygame.mouse.get_pos()
+
     def run(self):
         while True:
             # Create black background
@@ -76,14 +81,15 @@ class Editor:
             current_tile_img.set_alpha(100)
 
             # This gets the mouse position in the window and scales it to the size of the display surface from the window size
-            mpos = pygame.mouse.get_pos()
-            mpos = (mpos[0] / RENDER_SCALE, mpos[1] / RENDER_SCALE)
+            self.mpos = pygame.mouse.get_pos()
+            self.mpos = (self.mpos[0] / RENDER_SCALE, self.mpos[1] / RENDER_SCALE)
 
             # This calculates where the tile should go according to the mouse position and which part of the grid it is on
-            tile_pos = (int(mpos[0] // self.tilemap.tile_size), int(mpos[1]) // self.tilemap.tile_size)
+            tile_pos = (int(self.mpos[0] // self.tilemap.tile_size), int(self.mpos[1]) // self.tilemap.tile_size)
 
             # This draws the current_tile_img to the screen
-            self.display.blit(current_tile_img, (tile_pos[0] * self.tilemap.tile_size, tile_pos[1] * self.tilemap.tile_size))
+            if not self.select_new_tile:
+                self.display.blit(current_tile_img, (tile_pos[0] * self.tilemap.tile_size, tile_pos[1] * self.tilemap.tile_size))
 
             # This creates tiles by adding it to the tilemap. If the left mouse button is pressed, save the location of where the tile is being placed and information about it
             if self.clicking:
@@ -97,14 +103,16 @@ class Editor:
 
             if self.select_new_tile:
                 # Draws all of the tile options at top left screen
-                tiles_display_x_pos = 5
+                tiles_display_x_pos = 0
                 group_index = 0
+                variant = 0
                 for tile_group in self.tile_list:
                     for variants in self.assets[tile_group]:
-                        variants.set_alpha(100)
-                        self.display.blit(variants.copy(), (tiles_display_x_pos, 5))
+                        self.display.blit(variants.copy(), (tiles_display_x_pos, 0))
+                        self.display_rects[variant] = pygame.Rect(tiles_display_x_pos * 2 / RENDER_SCALE, 0, 16, 16)
                         tiles_display_x_pos += 16
-                        group_index += 1
+                        variant += 1
+                    group_index += 1
 
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -113,7 +121,12 @@ class Editor:
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     # Left mouse click
                     if event.button == 1:
-                        self.clicking = True
+                        if not self.select_new_tile:
+                            self.clicking = True
+                        else:
+                            for variant in self.display_rects:
+                                if pygame.Rect.collidepoint(self.display_rects[variant], self.mpos):
+                                    print(variant)
                     # Right mouse click
                     if event.button == 3:
                         self.right_clicking = True
