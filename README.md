@@ -3,7 +3,7 @@
 ## Resources
 
 # Used to help set up project, player, and tilemap
-  # https://www.youtube.com/watch?v=2gABYM5M0ww&t=2642s&ab_channel=DaFluffyPotato
+    # https://www.youtube.com/watch?v=2gABYM5M0ww&t=2642s&ab_channel=DaFluffyPotato
     # Window and Game
         # https://www.youtube.com/watch?v=2gABYM5M0ww&t=2642s&ab_channel=DaFluffyPotato
         # https://dafluffypotato.com/assets/pg_tutorial (01_window and 02_images_input_collisions)

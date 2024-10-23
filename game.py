@@ -19,6 +19,8 @@ class Game:
 
         display_width = 320
         display_height = 240
+
+        self.spawn_position = (display_width / 2, display_height - 16)
         
         # Create game window
         self.display = pygame.Surface((display_width, display_height))
@@ -32,8 +34,8 @@ class Game:
         # [Up, Left, Down, Right]
         self.player_movement = [False, False, False, False]
 
-        # Create player at position 32, 32
-        self.player = Player((display_width / 2, display_height - 16))
+        # Create player player at spawn position
+        self.player = Player(self.spawn_position)
         
         # Create power-up with random positioning logic
         self.power = PowerUp(display_width, display_height)
@@ -93,7 +95,7 @@ class Game:
 
                         # Subtract player_movement[3] (Right) from player_movement[1] (Left) to get horizontal direction
                         # Subtract player_movement[2] (Down) from player_movement[0] (Up) to get vertical direction
-                        self.player.move(self.tilemap, (self.player_movement[3] - self.player_movement[1], self.player_movement[2] - self.player_movement[0]))
+                        self.player.move(self.tilemap, (self.player_movement[3] - self.player_movement[1], self.player_movement[2] - self.player_movement[0]), self)
 
                         # Don't allow player movement until timer has met time limit
                         self.player.can_move = False
