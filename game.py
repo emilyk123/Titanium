@@ -8,6 +8,7 @@ from player import Player
 from tilemap import Tilemap
 from object import MovingRectangle
 from power import PowerUp
+from utils import load_images
 
 class Game:
     def __init__(self):
@@ -32,13 +33,25 @@ class Game:
         self.player_movement = [False, False, False, False]
 
         # Create player at position 32, 32
-        self.player = Player((32, 32))
+        self.player = Player((display_width / 2, display_height - 16))
         
         # Create power-up with random positioning logic
         self.power = PowerUp(display_width, display_height)
 
         # Initialize the tilemap
         self.tilemap = Tilemap(self)
+
+        # Game Tile Sprites
+        self.assets = {
+            'ground': load_images('ground'),
+            'water': load_images('water'),
+        }
+
+        # Try to load level 1, if it's not there then load game without it
+        try:
+            self.tilemap.load('level01.json')
+        except FileNotFoundError:
+            pass
     
         # instance 
         self.mover = MovingRectangle(x=display_width, y=64, width=64, height=16, speed=-2) 
@@ -80,7 +93,7 @@ class Game:
 
                         # Subtract player_movement[3] (Right) from player_movement[1] (Left) to get horizontal direction
                         # Subtract player_movement[2] (Down) from player_movement[0] (Up) to get vertical direction
-                        self.player.move((self.player_movement[3] - self.player_movement[1], self.player_movement[2] - self.player_movement[0]))
+                        self.player.move(self.tilemap, (self.player_movement[3] - self.player_movement[1], self.player_movement[2] - self.player_movement[0]))
 
                         # Don't allow player movement until timer has met time limit
                         self.player.can_move = False
