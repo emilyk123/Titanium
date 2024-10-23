@@ -1,3 +1,4 @@
+
 import sys
 import pygame
 from player import Player
@@ -15,7 +16,6 @@ class Game:
         self.clock = pygame.time.Clock()
         # Create custom events
         self.player_move_event = pygame.USEREVENT + 1
-        self.power_move_event = pygame.USEREVENT + 2
         # [Up, Left, Down, Right]
         self.player_movement = [False, False, False, False]
 
@@ -28,8 +28,6 @@ class Game:
     def run(self):
         # Set timer for player movement (every 1 second)
         pygame.time.set_timer(self.player_move_event, 1000)
-        # Set timer for randomizing power-up position (every 1 second)
-        pygame.time.set_timer(self.power_move_event, 1000)
 
         while True:
             # Checks all key and mouse presses
@@ -42,10 +40,6 @@ class Game:
                 # Allow player to move
                 if event.type == self.player_move_event:
                     self.player.can_move = True
-
-                # Randomize power-up position every second
-                if event.type == self.power_move_event:
-                    self.power.randomize_position()
 
                 # Check for input with WASD or the arrow keys
                 if event.type == pygame.KEYDOWN:
@@ -60,11 +54,15 @@ class Game:
                         if event.key == pygame.K_d or event.key == pygame.K_RIGHT:
                             self.player_movement[3] = True
 
-                        # Subtract player_movement[3] (Right) from player_movement[1] (Left) to get horizontal direction
-                        # Subtract player_movement[2] (Down) from player_movement[0] (Up) to get vertical direction
+                        # Move the player based on input
                         self.player.move((self.player_movement[3] - self.player_movement[1], self.player_movement[2] - self.player_movement[0]))
 
-                        # Don't allow player movement until timer has met time limit
+                        # Check for collision between player and power-up
+                        if self.player.collision(self.power):
+                            print("Power-up collected! Moving to a new position.")
+                            self.power.randomize_position()
+
+                        # Don't allow player movement until timer has met time limit again
                         self.player.can_move = False
 
                 if event.type == pygame.KEYUP:
@@ -81,10 +79,10 @@ class Game:
             # Recolor the background so it covers everything from the last frame
             self.screen.fill((0, 0, 0))
 
-            # Draw power-up at random positions
+            # Draw the power-up at its current position
             self.power.draw(self.screen)
 
-            # Draw the player at its current location to the screen
+            # Draw the player at its current location
             self.player.render(self.screen)
 
             # Updates the display to show all changes made to the game
