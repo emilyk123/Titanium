@@ -117,7 +117,7 @@ class Game:
             self.tilemap.render(self.display)
             
             # moves the rectangle
-            self.mover.move()
+            self.mover.move(self.display_width)
     
             # draws the rectangle and color red
             self.mover.draw(self.display, "RED")

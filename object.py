@@ -10,11 +10,11 @@ class MovingRectangle:
         self.speed = speed
         self.rect = pygame.Rect(x, y, width, height)
 
-    def move(self):
+    def move(self, width):
         self.rect.x += self.speed
 
         if self.rect.right < 0: 
-            self.rect.x = 800
+            self.rect.x = width
 
     def draw(self, screen, color):
         # draws rec on screen
