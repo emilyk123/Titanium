@@ -8,21 +8,24 @@ from player import Player
 from tilemap import Tilemap
 from object import MovingRectangle
 from power import PowerUp
+from utils import load_images
 
 class Game:
     def __init__(self):
         pygame.init() 
 
-        screen_width = 640
-        screen_height = 480
+        self.screen_width = 640
+        self.screen_height = 480
 
-        display_width = 320
-        display_height = 240
+        self.display_width = 320
+        self.display_height = 240
+
+        self.spawn_position = (self.display_width / 2, self.display_height - 16)
         
         # Create game window
-        self.display = pygame.Surface((display_width, display_height))
+        self.display = pygame.Surface((self.display_width, self.display_height))
 
-        self.screen = pygame.display.set_mode((screen_width, screen_height))
+        self.screen = pygame.display.set_mode((self.screen_width, self.screen_height))
         # Create clock used to limit frame rate
         self.clock = pygame.time.Clock()
         # Create custom event
@@ -31,17 +34,30 @@ class Game:
         # [Up, Left, Down, Right]
         self.player_movement = [False, False, False, False]
 
-        # Create player at position 32, 32
-        self.player = Player((32, 32))
+        # Create player player at spawn position
+        self.player = Player(self.spawn_position)
         
         # Create power-up with random positioning logic
-        self.power = PowerUp(display_width, display_height)
+        self.power = PowerUp(self.display_width, self.display_height)
 
         # Initialize the tilemap
         self.tilemap = Tilemap(self)
+
+        # Game Tile Sprites
+        self.assets = {
+            'ground': load_images('ground'),
+            'water': load_images('water'),
+            'health': load_images('health')
+        }
+
+        # Try to load level 1, if it's not there then load game without it
+        try:
+            self.tilemap.load('level01.json')
+        except FileNotFoundError:
+            pass
     
         # instance 
-        self.mover = MovingRectangle(x=display_width, y=64, width=64, height=16, speed=-2) 
+        self.mover = MovingRectangle(x=self.display_width, y=64, width=64, height=16, speed=-2) 
 
     def run(self):
         # Every 3 millisecond the player can move
@@ -80,7 +96,7 @@ class Game:
 
                         # Subtract player_movement[3] (Right) from player_movement[1] (Left) to get horizontal direction
                         # Subtract player_movement[2] (Down) from player_movement[0] (Up) to get vertical direction
-                        self.player.move((self.player_movement[3] - self.player_movement[1], self.player_movement[2] - self.player_movement[0]))
+                        self.player.move(self.tilemap, (self.player_movement[3] - self.player_movement[1], self.player_movement[2] - self.player_movement[0]), self)
 
                         # Don't allow player movement until timer has met time limit
                         self.player.can_move = False
@@ -113,6 +129,9 @@ class Game:
 
             # Draw the player at its current location to the screen
             self.player.render(self.display)
+
+            # Draw squares in top right corner to display the player's health
+            self.tilemap.draw_health(self.display, self.player)
             
             # Blit the screen, display, with all of the sprites on to the screen
             # The display is smaller than the screen so it scales up the size of everything in the display
