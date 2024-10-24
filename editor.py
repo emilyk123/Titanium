@@ -19,6 +19,9 @@ class Editor:
         pygame.init()
 
         pygame.display.set_caption('editor')
+        
+        self.display_width = 320
+        self.display_height = 240
 
         # This is the size of the window
         self.screen = pygame.display.set_mode((640, 480))
