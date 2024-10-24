@@ -9,6 +9,7 @@ class Player:
         self.can_move = True
         self.position = list(position)
         self.size = (16, 16)
+        self.health = 3
 
     def rect(self):
         # Returns player rect
@@ -26,6 +27,9 @@ class Player:
                 # Checks if the player rect collided with one of rects in physics_rects_around
                 if player_rect.colliderect(rect):
                     self.position = list(game.spawn_position)
+                    # If health isn't at zero, decrease the player health by 1 when player goes in water
+                    if self.health != 0:
+                        self.health -= 1
     
     def render(self, surface):
         # Draw rectangle to the surface

@@ -14,18 +14,18 @@ class Game:
     def __init__(self):
         pygame.init() 
 
-        screen_width = 640
-        screen_height = 480
+        self.screen_width = 640
+        self.screen_height = 480
 
-        display_width = 320
-        display_height = 240
+        self.display_width = 320
+        self.display_height = 240
 
-        self.spawn_position = (display_width / 2, display_height - 16)
+        self.spawn_position = (self.display_width / 2, self.display_height - 16)
         
         # Create game window
-        self.display = pygame.Surface((display_width, display_height))
+        self.display = pygame.Surface((self.display_width, self.display_height))
 
-        self.screen = pygame.display.set_mode((screen_width, screen_height))
+        self.screen = pygame.display.set_mode((self.screen_width, self.screen_height))
         # Create clock used to limit frame rate
         self.clock = pygame.time.Clock()
         # Create custom event
@@ -38,7 +38,7 @@ class Game:
         self.player = Player(self.spawn_position)
         
         # Create power-up with random positioning logic
-        self.power = PowerUp(display_width, display_height)
+        self.power = PowerUp(self.display_width, self.display_height)
 
         # Initialize the tilemap
         self.tilemap = Tilemap(self)
@@ -47,6 +47,7 @@ class Game:
         self.assets = {
             'ground': load_images('ground'),
             'water': load_images('water'),
+            'health': load_images('health')
         }
 
         # Try to load level 1, if it's not there then load game without it
@@ -56,7 +57,7 @@ class Game:
             pass
     
         # instance 
-        self.mover = MovingRectangle(x=display_width, y=64, width=64, height=16, speed=-2) 
+        self.mover = MovingRectangle(x=self.display_width, y=64, width=64, height=16, speed=-2) 
 
     def run(self):
         # Every 3 millisecond the player can move
@@ -128,6 +129,9 @@ class Game:
 
             # Draw the player at its current location to the screen
             self.player.render(self.display)
+
+            # Draw squares in top right corner to display the player's health
+            self.tilemap.draw_health(self.display, self.player)
             
             # Blit the screen, display, with all of the sprites on to the screen
             # The display is smaller than the screen so it scales up the size of everything in the display
