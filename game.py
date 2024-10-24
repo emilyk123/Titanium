@@ -122,6 +122,12 @@ class Game:
             # draws the rectangle and color red
             self.mover.draw(self.display, "RED")
 
+            # if player collides with rectangle move along with the rectangle
+            if self.player.rect().colliderect(self.mover.rect):
+               if self.player.rect().bottom <= self.mover.rect.bottom:
+                    # move the player with the rectangle speed
+                    self.player.position[0] += self.mover.speed
+            
             # Draw power-up at random positions
             self.power.draw(self.display)
 
