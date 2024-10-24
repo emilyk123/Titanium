@@ -60,7 +60,7 @@ class Game:
 
     def run(self):
         # Set timer for player movement (every 1 second)
-        pygame.time.set_timer(self.player_move_event, 1000)
+        pygame.time.set_timer(self.player_move_event, 100)
 
         while True:
             # Checks all key and mouse presses
