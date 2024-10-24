@@ -30,7 +30,6 @@ class Game:
         self.clock = pygame.time.Clock()
         # Create custom event
         self.player_move_event = pygame.USEREVENT + 1
-        self.power_move_event = pygame.USEREVENT + 2
         # [Up, Left, Down, Right]
         self.player_movement = [False, False, False, False]
 
@@ -60,10 +59,8 @@ class Game:
         self.mover = MovingRectangle(x=self.display_width, y=64, width=64, height=16, speed=-2) 
 
     def run(self):
-        # Every 3 millisecond the player can move
-        pygame.time.set_timer(self.player_move_event, 200)
-        # Set timer for randomizing power-up position (every 1 second)
-        pygame.time.set_timer(self.power_move_event, 1000)
+        # Set timer for player movement (every 1 second)
+        pygame.time.set_timer(self.player_move_event, 1000)
 
         while True:
             # Checks all key and mouse presses
@@ -76,10 +73,6 @@ class Game:
                 # Allow player to move
                 if event.type == self.player_move_event:
                     self.player.can_move = True
-
-                # Randomize power-up position every second
-                if event.type == self.power_move_event:
-                    self.power.randomize_position()
 
                 # Check for input with WASD or the arrow keys
                 if event.type == pygame.KEYDOWN:
@@ -98,7 +91,12 @@ class Game:
                         # Subtract player_movement[2] (Down) from player_movement[0] (Up) to get vertical direction
                         self.player.move(self.tilemap, (self.player_movement[3] - self.player_movement[1], self.player_movement[2] - self.player_movement[0]), self)
 
-                        # Don't allow player movement until timer has met time limit
+                        # Check for collision between player and power-up
+                        if self.player.collision(self.power):
+                            print("Power-up collected! Moving to a new position.")
+                            self.power.randomize_position()
+
+                        # Don't allow player movement until timer has met time limit again
                         self.player.can_move = False
 
                 if event.type == pygame.KEYUP:

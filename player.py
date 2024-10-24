@@ -3,6 +3,7 @@
 # https://dafluffypotato.com/assets/pg_tutorial
 
 import pygame
+# player.py
 class Player:
     def __init__(self, position):
         # After the player moves, this is set to false until the timer sets it back to true
@@ -10,6 +11,8 @@ class Player:
         self.position = list(position)
         self.size = (16, 16)
         self.health = 3
+        self.width = 16  # width of the player
+        self.height = 16  # height of the player
 
     def rect(self):
         # Returns player rect
@@ -34,3 +37,12 @@ class Player:
     def render(self, surface):
         # Draw rectangle to the surface
         pygame.draw.rect(surface, pygame.Color(0, 255, 0), pygame.Rect(self.position[0], self.position[1], 16, 16))
+    
+    def collision(self, power_up):
+        # Check if player rectangle intersects with the power-up rectangle
+        return (
+            self.position[0] < power_up.x + power_up.width and
+            self.position[0] + self.width > power_up.x and
+            self.position[1] < power_up.y + power_up.height and
+            self.position[1] + self.height > power_up.y
+        )
