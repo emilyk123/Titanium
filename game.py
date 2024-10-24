@@ -15,7 +15,7 @@ class Game:
         self.player_move_event = pygame.USEREVENT + 1
         self.player_movement = [False, False, False, False]
 
-        # Create player at position 50, 50
+        # Create the player position  50, 50
         self.player = Player((50, 50))
 
         # instance
@@ -61,11 +61,11 @@ class Game:
             self.mover.move()
             self.mover.draw(self.screen, "RED")
 
-            # Check for collision between the player and the moving rectangle
+            # Checks for collision between players and the rectangle objectl
             if self.player.rect.colliderect(self.mover.rect):
-                # Check if player is on top of the rectangle (not just colliding from the side)
+                # if the player is on top of the rectangle move the player
                 if self.player.rect.bottom <= self.mover.rect.bottom:
-                    # Move the player with the rectangle's speed
+                    # move player with rectangle speed
                     self.player.rect.x += self.mover.speed
                     self.player.position[0] = self.player.rect.x
 
