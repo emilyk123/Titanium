@@ -10,6 +10,7 @@ from object import MovingRectangle
 from power import PowerUp
 from screen import MainMenu
 from screen import PauseMenu
+from screen import GameOver
 from utils import load_images
 
 from enum import Enum
@@ -33,10 +34,11 @@ class Game:
         self.spawn_position = (self.display_width / 2, self.display_height - 16)
 
         # Keeps track of which state the player is at in the game
-        self.current_state = CurrentState.Pause
+        self.current_state = CurrentState.GameOver
 
         self.main_menu = MainMenu(self)
         self.pause_menu = PauseMenu(self)
+        self.game_over = GameOver(self)
         
         # Create game window
         self.display = pygame.Surface((self.display_width, self.display_height))
@@ -142,17 +144,27 @@ class Game:
                 if self.clicked and self.main_menu.current_button == "Start" and self.can_click_button:
                     self.current_state = CurrentState.Game
                     self.can_click_button = False
-                if self.clicked and self.main_menu.current_button == "Quit" and self.can_click_button:
+                if self.clicked and self.main_menu.current_button == "Quit":
                     pygame.quit()
                     sys.exit()
             
             elif self.current_state == CurrentState.Pause:
                 self.display.fill((255, 255, 255))
                 self.pause_menu.render(self.display)
-                if self.clicked and self.pause_menu.current_button == "MainMenu":
+                if self.clicked and self.pause_menu.current_button == "MainMenu" and self.can_click_button:
                     self.current_state = CurrentState.MainMenu
                     self.can_click_button = False
                 if self.clicked and self.pause_menu.current_button == "Quit":
+                    pygame.quit()
+                    sys.exit()
+            
+            elif self.current_state == CurrentState.GameOver:
+                self.display.fill((255, 255, 255))
+                self.game_over.render(self.display)
+                if self.clicked and self.game_over.current_button == "Restart" and self.can_click_button:
+                    self.current_state = CurrentState.Game
+                    self.can_click_button = False
+                if self.clicked and self.game_over.current_button == "Quit":
                     pygame.quit()
                     sys.exit()
             
