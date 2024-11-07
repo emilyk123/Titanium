@@ -10,6 +10,15 @@ from object import MovingRectangle
 from power import PowerUp
 from utils import load_images
 
+# # ??? not importing 
+
+# from power import PowerUPGen
+
+# olas import 
+from powerUpSpeed import SpeedPowerUP 
+from powerUpInvisble import InvisblePowerUp
+
+
 class Game:
     def __init__(self):
         pygame.init() 
@@ -92,12 +101,13 @@ class Game:
                         self.player.move(self.tilemap, (self.player_movement[3] - self.player_movement[1], self.player_movement[2] - self.player_movement[0]), self)
 
                         # Check for collision between player and power-up
-                        if self.player.collision(self.power):
-                            print("Power-up collected! Moving to a new position.")
-                            self.power.randomize_position()
+ 
+                        # if self.player.collision(self.power):
+                        #     print("Power-up collected! Moving to a new position.")
+                        #     self.power.randomize_position()
 
-                        # Don't allow player movement until timer has met time limit again
-                        self.player.can_move = False
+                        # # Don't allow player movement until timer has met time limit again
+                        # self.player.can_move = False
 
                 if event.type == pygame.KEYUP:
                     # When keys are released, set player_movement back to false
