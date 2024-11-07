@@ -34,7 +34,7 @@ class Game:
         self.spawn_position = (self.display_width / 2, self.display_height - 16)
 
         # Keeps track of which state the player is at in the game
-        self.current_state = CurrentState.GameOver
+        self.current_state = CurrentState.MainMenu
 
         self.main_menu = MainMenu(self)
         self.pause_menu = PauseMenu(self)
@@ -103,6 +103,8 @@ class Game:
                     self.can_click_button = True
                 # Check for input with WASD or the arrow keys
                 if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_ESCAPE:
+                        self.current_state = CurrentState.Pause
                     # If timer has passed time limit, allow player input
                     if self.player.can_move:
                         if event.key == pygame.K_w or event.key == pygame.K_UP:
