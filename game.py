@@ -46,6 +46,7 @@ class Game:
         self.clock = pygame.time.Clock()
         # Create custom event
         self.player_move_event = pygame.USEREVENT + 1
+        self.menu_delay_event = pygame.USEREVENT + 2
         # [Up, Left, Down, Right]
         self.player_movement = [False, False, False, False]
 
@@ -68,6 +69,8 @@ class Game:
         # Keeps track of when the player has pressed the left mouse button
         self.clicked = False
 
+        self.can_click_button = True
+
         # Try to load level 1, if it's not there then load game without it
         try:
             self.tilemap.load('level01.json')
@@ -78,8 +81,10 @@ class Game:
         self.mover = MovingRectangle(x=self.display_width, y=64, width=64, height=16, speed=-2) 
 
     def run(self):
-        # Set timer for player movement (every 1 second)
+        # Set timer for player movement
         pygame.time.set_timer(self.player_move_event, 100)
+        # Set timer to put a delay how fast the player can press menu buttons
+        pygame.time.set_timer(self.menu_delay_event, 500)
 
         while True:
             # Checks all key and mouse presses
@@ -91,6 +96,9 @@ class Game:
                 # Allow player to move
                 if event.type == self.player_move_event:
                     self.player.can_move = True
+                # Allow the player to click buttons in the menu again
+                if event.type == self.menu_delay_event:
+                    self.can_click_button = True
                 # Check for input with WASD or the arrow keys
                 if event.type == pygame.KEYDOWN:
                     # If timer has passed time limit, allow player input
@@ -122,6 +130,7 @@ class Game:
                         self.player_movement[2] = False
                     if event.key == pygame.K_d or event.key == pygame.K_RIGHT:
                         self.player_movement[3] = False
+
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     self.clicked = True
                 else:
@@ -130,9 +139,10 @@ class Game:
             if self.current_state == CurrentState.MainMenu:
                 self.display.fill((255, 255, 255))
                 self.main_menu.render(self.display)
-                if self.clicked and self.main_menu.current_button == "Start":
+                if self.clicked and self.main_menu.current_button == "Start" and self.can_click_button:
                     self.current_state = CurrentState.Game
-                if self.clicked and self.main_menu.current_button == "Quit":
+                    self.can_click_button = False
+                if self.clicked and self.main_menu.current_button == "Quit" and self.can_click_button:
                     pygame.quit()
                     sys.exit()
             
@@ -141,6 +151,7 @@ class Game:
                 self.pause_menu.render(self.display)
                 if self.clicked and self.pause_menu.current_button == "MainMenu":
                     self.current_state = CurrentState.MainMenu
+                    self.can_click_button = False
                 if self.clicked and self.pause_menu.current_button == "Quit":
                     pygame.quit()
                     sys.exit()
