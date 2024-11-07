@@ -36,6 +36,36 @@ class MainMenu:
         start_button.render(surface)
         quit_button.render(surface)
 
+class PauseMenu:
+    def __init__(self, game):
+        self.game = game
+        self.mpos = pygame.mouse.get_pos()
+        self.current_button = None
+    
+    def render(self, surface):
+        font = pygame.font.SysFont('Consolas', 24)
+        img = font.render('Pause Menu', True, pygame.Color(0, 0, 0))
+        surface.blit(img, ((self.game.display_width // 2) - (img.get_width() // 2), self.game.display_height // 3))
+
+        self.mpos = pygame.mouse.get_pos()
+        self.mpos = (self.mpos[0] / RENDER_SCALE, self.mpos[1] / RENDER_SCALE)
+
+        main_menu_button = Button(20, 100, ((self.game.display_width // 5), self.game.display_height // 2), 'Main Menu')
+        main_menu_button_rect = pygame.Rect(main_menu_button.position[0], main_menu_button.position[1], main_menu_button.length * RENDER_SCALE, main_menu_button.width * RENDER_SCALE)
+
+        quit_button = Button(20, 60, ((self.game.display_width // 1.7), self.game.display_height // 2), 'Quit')
+        quit_button_rect = pygame.Rect(quit_button.position[0], quit_button.position[1], quit_button.length * RENDER_SCALE, quit_button.width * RENDER_SCALE)
+
+        if main_menu_button_rect.collidepoint(self.mpos):
+            self.current_button = "MainMenu"
+        elif quit_button_rect.collidepoint(self.mpos):
+            self.current_button = "Quit"
+        else:
+            self.current_button = None
+
+        main_menu_button.render(surface)
+        quit_button.render(surface)
+
 class Button:
     def __init__(self, length, width, position, text):
         self.length = length
