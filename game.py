@@ -8,7 +8,16 @@ from player import Player
 from tilemap import Tilemap
 from object import MovingRectangle
 from power import PowerUp
+from screen import MainMenu
 from utils import load_images
+
+from enum import Enum
+
+class CurrentState(Enum):
+    MainMenu = 1
+    Game = 2
+    GameOver = 3
+    Pause = 4
 
 class Game:
     def __init__(self):
@@ -21,6 +30,11 @@ class Game:
         self.display_height = 240
 
         self.spawn_position = (self.display_width / 2, self.display_height - 16)
+
+        # Keeps track of which state the player is at in the game
+        self.current_state = CurrentState.MainMenu
+
+        self.main_menu = MainMenu(self)
         
         # Create game window
         self.display = pygame.Surface((self.display_width, self.display_height))
@@ -49,6 +63,9 @@ class Game:
             'health': load_images('health')
         }
 
+        # Keeps track of when the player has pressed the left mouse button
+        self.clicked = False
+
         # Try to load level 1, if it's not there then load game without it
         try:
             self.tilemap.load('level01.json')
@@ -69,11 +86,9 @@ class Game:
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     sys.exit()
-
                 # Allow player to move
                 if event.type == self.player_move_event:
                     self.player.can_move = True
-
                 # Check for input with WASD or the arrow keys
                 if event.type == pygame.KEYDOWN:
                     # If timer has passed time limit, allow player input
@@ -86,19 +101,15 @@ class Game:
                             self.player_movement[2] = True
                         if event.key == pygame.K_d or event.key == pygame.K_RIGHT:
                             self.player_movement[3] = True
-
                         # Subtract player_movement[3] (Right) from player_movement[1] (Left) to get horizontal direction
                         # Subtract player_movement[2] (Down) from player_movement[0] (Up) to get vertical direction
                         self.player.move(self.tilemap, (self.player_movement[3] - self.player_movement[1], self.player_movement[2] - self.player_movement[0]), self)
-
                         # Check for collision between player and power-up
                         if self.player.collision(self.power):
                             print("Power-up collected! Moving to a new position.")
                             self.power.randomize_position()
-
                         # Don't allow player movement until timer has met time limit again
                         self.player.can_move = False
-
                 if event.type == pygame.KEYUP:
                     # When keys are released, set player_movement back to false
                     if event.key == pygame.K_w or event.key == pygame.K_UP:
@@ -109,34 +120,44 @@ class Game:
                         self.player_movement[2] = False
                     if event.key == pygame.K_d or event.key == pygame.K_RIGHT:
                         self.player_movement[3] = False
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    self.clicked = True
+                else:
+                    self.clicked = False
 
-            # Recolor the background so it covers everything from the last frame
-            self.display.fill((0, 0, 0))
-
-            # Add all of the tiles for the background
-            self.tilemap.render(self.display)
+            if self.current_state == CurrentState.MainMenu:
+                self.display.fill((255, 255, 255))
+                self.main_menu.render(self.display)
+                if self.clicked and self.main_menu.current_button == "Start":
+                    self.current_state = CurrentState.Game
+                if self.clicked and self.main_menu.current_button == "Quit":
+                    pygame.quit()
+                    sys.exit()
             
-            # moves the rectangle
-            self.mover.move(self.display_width)
-    
-            # draws the rectangle and color red
-            self.mover.draw(self.display, "RED")
-
-            # if player collides with rectangle move along with the rectangle
-            if self.player.rect().colliderect(self.mover.rect):
-               if self.player.rect().bottom <= self.mover.rect.bottom:
-                    # move the player with the rectangle speed
-                    self.player.position[0] += self.mover.speed
-            
-            # Draw power-up at random positions
-            self.power.draw(self.display)
-
-            # Draw the player at its current location to the screen
-            self.player.render(self.display)
-
-            # Draw squares in top right corner to display the player's health
-            self.tilemap.draw_health(self.display, self.player)
-            
+            elif self.current_state == CurrentState.Game:
+                # Recolor the background so it covers everything from the last frame
+                self.display.fill((0, 0, 0))
+                # Add all of the tiles for the background
+                self.tilemap.render(self.display)
+                
+                # moves the rectangle
+                self.mover.move(self.display_width)
+        
+                # draws the rectangle and color red
+                self.mover.draw(self.display, "RED")
+                # if player collides with rectangle move along with the rectangle
+                if self.player.rect().colliderect(self.mover.rect):
+                    if self.player.rect().bottom <= self.mover.rect.bottom:
+                            # move the player with the rectangle speed
+                            self.player.position[0] += self.mover.speed
+                
+                # Draw power-up at random positions
+                self.power.draw(self.display)
+                # Draw the player at its current location to the screen
+                self.player.render(self.display)
+                # Draw squares in top right corner to display the player's health
+                self.tilemap.draw_health(self.display, self.player)
+                
             # Blit the screen, display, with all of the sprites on to the screen
             # The display is smaller than the screen so it scales up the size of everything in the display
             self.screen.blit(pygame.transform.scale(self.display, self.screen.get_size()), (0, 0))
