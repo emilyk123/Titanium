@@ -13,6 +13,7 @@ class Player:
         self.health = 3
         self.width = 16  # width of the player
         self.height = 16  # height of the player
+        self.is_alive = True
 
     def rect(self):
         # Returns player rect
@@ -33,6 +34,8 @@ class Player:
                     # If health isn't at zero, decrease the player health by 1 when player goes in water
                     if self.health != 0:
                         self.health -= 1
+                        if self.health == 0:
+                            self.is_alive = False
     
     def render(self, surface):
         # Draw rectangle to the surface

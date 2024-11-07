@@ -139,6 +139,12 @@ class Game:
                     self.clicked = True
                 else:
                     self.clicked = False
+            
+
+            if not self.player.is_alive:
+                self.current_state = CurrentState.GameOver
+                self.player.is_alive = True
+                self.player.health = 3
 
             if self.current_state == CurrentState.MainMenu:
                 self.display.fill((255, 255, 255))
