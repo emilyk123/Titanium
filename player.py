@@ -14,13 +14,13 @@ class Player:
         self.width = 16  # width of the player
         self.height = 16  # height of the player
 
-        # # power up general 
-        # self.base_speed = 5
-        # self.speed = self.base_speed
-        # self.invisible = False
-        # self.invisibility_duration = 3000  # Duration in milliseconds for invisibility
-        # self.speed_duration = 5000  # Duration for speed boost
-        # self.power_up_end_time = None
+       # power up general 
+        self.base_speed = 5
+        self.speed = self.base_speed
+        self.invisible = False
+        self.invisibility_duration = 3000  # Duration in milliseconds for invisibility
+        self.speed_duration = 5000  # Duration for speed boost
+        self.power_up_end_time = None
 
     def rect(self):
         # Returns player rect

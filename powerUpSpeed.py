@@ -2,11 +2,11 @@
 import pygame
 import random
 
-
 class SpeedPowerUP(pygame.sprite.Sprite):
     def __init__(self, x, y):
         super().__init__()
         self.effect = "speed"
+
         
         # Create a basic visual representation for the power-up
         self.image = pygame.Surface((20, 20))  # Size of the power-up
@@ -24,3 +24,9 @@ class SpeedPowerUP(pygame.sprite.Sprite):
         # Move the power-up to a new random position within screen bounds
         self.rect.x = random.randint(0, width - self.rect.width)
         self.rect.y = random.randint(0, height - self.rect.height)
+    
+    def speed_up(self, game):
+        self.player_movement_delay = 1
+
+
+    # change the speed or increase the speed 

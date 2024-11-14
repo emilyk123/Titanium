@@ -7,10 +7,6 @@ from object import MovingRectangle
 from power import PowerUp
 from utils import load_images
 
-# # ??? not importing 
-
-# from power import PowerUPGen
-
 # olas import 
 from powerUpSpeed import SpeedPowerUP 
 from powerUpInvisble import InvisblePowerUp
@@ -64,13 +60,15 @@ class Game:
         x, y = 100, 100  # Example initial positions for power-ups
         self.invisble_powerUp = InvisblePowerUp(100,100)
         self.speed_powerUp = SpeedPowerUP(200,150)
+
+        self.player_movement_delay = 100
     
         # Create the moving rectangle instance
         self.mover = MovingRectangle(x=self.display_width, y=64, width=64, height=16, speed=-2) 
 
     def run(self):
-        # Set timer for player movement (every 1 second)
-        pygame.time.set_timer(self.player_move_event, 100)
+        # Set timer for player movement)
+        pygame.time.set_timer(self.player_move_event, self.player_movement_delay)
 
         while True:
             # Checks all key and mouse presses
@@ -150,6 +148,9 @@ class Game:
             if self.player.rect().colliderect(self.speed_powerUp.rect):
                 # print("Speed Power-Up collected!")
                 self.speed_powerUp.randomize_position(self.display_width, self.display_height)
+
+                # using player movement delay here
+                self.speed_powerUp.speed_up(self)
 
             # Draw the player at its current location to the screen
             self.player.render(self.display)
