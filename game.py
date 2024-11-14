@@ -1,9 +1,6 @@
-# Used tutorial https://www.youtube.com/watch?v=2gABYM5M0ww&list=LL&index=5&t=2735s&ab_channel=DaFluffyPotato
-# How to create custom events: https://stackoverflow.com/questions/24475718/pygame-custom-event
-# How to create a timer: https://www.pygame.org/docs/ref/time.html#pygame.time.set_timer
-
 import sys
 import pygame
+import random
 from player import Player
 from tilemap import Tilemap
 from object import MovingRectangle
@@ -17,7 +14,6 @@ from utils import load_images
 # olas import 
 from powerUpSpeed import SpeedPowerUP 
 from powerUpInvisble import InvisblePowerUp
-
 
 class Game:
     def __init__(self):
@@ -63,8 +59,13 @@ class Game:
             self.tilemap.load('level01.json')
         except FileNotFoundError:
             pass
+
+        # Creating the powerup instances here
+        x, y = 100, 100  # Example initial positions for power-ups
+        self.invisble_powerUp = InvisblePowerUp(100,100)
+        self.speed_powerUp = SpeedPowerUP(200,150)
     
-        # instance 
+        # Create the moving rectangle instance
         self.mover = MovingRectangle(x=self.display_width, y=64, width=64, height=16, speed=-2) 
 
     def run(self):
@@ -74,7 +75,7 @@ class Game:
         while True:
             # Checks all key and mouse presses
             for event in pygame.event.get():
-                # Pressing the red x at the corner or the window closes the game
+                # Pressing the red x at the corner of the window closes the game
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     sys.exit()
@@ -101,7 +102,7 @@ class Game:
                         self.player.move(self.tilemap, (self.player_movement[3] - self.player_movement[1], self.player_movement[2] - self.player_movement[0]), self)
 
                         # Check for collision between player and power-up
- 
+
                         # if self.player.collision(self.power):
                         #     print("Power-up collected! Moving to a new position.")
                         #     self.power.randomize_position()
@@ -126,20 +127,29 @@ class Game:
             # Add all of the tiles for the background
             self.tilemap.render(self.display)
             
-            # moves the rectangle
+            # Move the rectangle
             self.mover.move(self.display_width)
     
-            # draws the rectangle and color red
+            # Draw the rectangle and color it red
             self.mover.draw(self.display, "RED")
 
-            # if player collides with rectangle move along with the rectangle
+            # If player collides with rectangle, move along with the rectangle
             if self.player.rect().colliderect(self.mover.rect):
-               if self.player.rect().bottom <= self.mover.rect.bottom:
-                    # move the player with the rectangle speed
+                if self.player.rect().bottom <= self.mover.rect.bottom:
+                    # Move the player with the rectangle speed
                     self.player.position[0] += self.mover.speed
             
-            # Draw power-up at random positions
-            self.power.draw(self.display)
+            # Draw power-ups at their positions
+            self.invisble_powerUp.draw(self.display)
+            self.speed_powerUp.draw(self.display)
+
+            # Check for collision with power-ups
+            if self.player.rect().colliderect(self.invisble_powerUp.rect):
+                # print("Invisible Power-Up collected!")
+                self.invisble_powerUp.randomize_position(self.display_width, self.display_height)
+            if self.player.rect().colliderect(self.speed_powerUp.rect):
+                # print("Speed Power-Up collected!")
+                self.speed_powerUp.randomize_position(self.display_width, self.display_height)
 
             # Draw the player at its current location to the screen
             self.player.render(self.display)
@@ -147,8 +157,7 @@ class Game:
             # Draw squares in top right corner to display the player's health
             self.tilemap.draw_health(self.display, self.player)
             
-            # Blit the screen, display, with all of the sprites on to the screen
-            # The display is smaller than the screen so it scales up the size of everything in the display
+            # Blit the screen, display, with all of the sprites onto the screen
             self.screen.blit(pygame.transform.scale(self.display, self.screen.get_size()), (0, 0))
 
             # Updates the display to show all changes made to the game
