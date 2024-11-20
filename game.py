@@ -178,7 +178,7 @@ class Game:
             
             elif self.current_state == CurrentState.Game:
                 # Recolor the background so it covers everything from the last frame
-                self.display.fill((0, 0, 0))
+                self.display.fill((106, 183, 215))
                 # Add all of the tiles for the background
                 self.tilemap.render(self.display)
                 

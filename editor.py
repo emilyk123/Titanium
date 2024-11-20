@@ -96,7 +96,7 @@ class Editor:
     def run(self):
         while True:
             # Create black background
-            self.display.fill((0, 0, 0))
+            self.display.fill((106, 183, 215))
 
             # During the first loop this draws the tiles that were loaded in if the file existed
             # After the first loop, it draws the new tiles that have been drawn to the screen from the last frame
