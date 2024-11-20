@@ -26,23 +26,43 @@ class Player:
             self.position[1] += movement[1] * 16
             
             player_rect = self.rect()
-            for rect in tilemap.physics_rects_around(self.position):
+            for rect in tilemap.physics_rects_around(self.position, game.background.camera_offset):
                 # Checks if the player rect collided with one of rects in physics_rects_around
                 if player_rect.colliderect(rect):
                     self.position = list(game.spawn_position)
                     # If health isn't at zero, decrease the player health by 1 when player goes in water
                     if self.health != 0:
                         self.health -= 1
+    def collision(self, power_up, camera_offset):
+    # Adjust power-up position by camera offset
+        power_up_rect = pygame.Rect(
+            power_up.x,
+            power_up.y - camera_offset,  # Adjust power-up's y-position by camera offset
+            power_up.width,
+            power_up.height
+    )
+
+    # Check if the player's rect collides with the adjusted power-up rect
+        return self.rect().colliderect(power_up_rect)
+
     
     def render(self, surface):
         # Draw rectangle to the surface
         pygame.draw.rect(surface, pygame.Color(0, 255, 0), pygame.Rect(self.position[0], self.position[1], 16, 16))
     
-    def collision(self, power_up):
+   # def collision(self, power_up):
         # Check if player rectangle intersects with the power-up rectangle
-        return (
-            self.position[0] < power_up.x + power_up.width and
-            self.position[0] + self.width > power_up.x and
-            self.position[1] < power_up.y + power_up.height and
-            self.position[1] + self.height > power_up.y
-        )
+       # return (
+           # self.position[0] < power_up.x + power_up.width and
+           # self.position[0] + self.width > power_up.x and
+           # self.position[1] < power_up.y + power_up.height and
+          #  self.position[1] + self.height > power_up.y
+        #)
+    
+    def render_relative(self, surface, camera_offset):
+    # Draw the player adjusted for the camera offset
+        pygame.draw.rect(
+            surface,
+            pygame.Color(0, 255, 0),  # Green color
+            pygame.Rect(self.position[0], self.position[1] - camera_offset, self.width, self.height)
+    )

@@ -38,13 +38,13 @@ class Tilemap:
                 tiles.append(self.tilemap[check_loc])
         return tiles
     
-    def physics_rects_around(self, pos):
+    def physics_rects_around(self, pos, camera_offset=0):
         rects = []
         for tile in self.tiles_around(pos):
             # Checks if the tile type is in the PHYSICS_TILES list
             if tile['type'] in PHYSICS_TILES:
                 # Add the rect of the tile that is around the player to the rects list
-                rects.append(pygame.Rect(tile['pos'][0] * self.tile_size, tile['pos'][1] * self.tile_size, self.tile_size, self.tile_size))
+                rects.append(pygame.Rect(tile['pos'][0] * self.tile_size, tile['pos'][1] * self.tile_size - camera_offset, self.tile_size, self.tile_size))
         # Returns list of rects that the player will interact with
         return rects
     
@@ -76,7 +76,7 @@ class Tilemap:
         self.tilemap = map_data['tilemap']
         self.tile_size = map_data['tile_size']
 
-    def render(self, surface):
+    def render(self, surface, camera_offset = 0):
         for loc in self.tilemap:
             tile = self.tilemap[loc]
-            surface.blit(self.game.assets[tile['type']][tile['variant']], (tile['pos'][0] * self.tile_size, tile['pos'][1] * self.tile_size))
+            surface.blit(self.game.assets[tile['type']][tile['variant']], (tile['pos'][0] * self.tile_size, tile['pos'][1] * self.tile_size - camera_offset))

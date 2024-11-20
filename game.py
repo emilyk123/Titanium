@@ -9,7 +9,7 @@ from tilemap import Tilemap
 from object import MovingRectangle
 from power import PowerUp
 from utils import load_images
-
+from background import Background
 class Game:
     def __init__(self):
         pygame.init() 
@@ -28,6 +28,10 @@ class Game:
         self.screen = pygame.display.set_mode((self.screen_width, self.screen_height))
         # Create clock used to limit frame rate
         self.clock = pygame.time.Clock()
+
+        # Initialize background
+        self.background = Background((135, 206, 250), (self.display_width, self.display_height))  # Sky blue color
+
         # Create custom event
         self.player_move_event = pygame.USEREVENT + 1
         # [Up, Left, Down, Right]
@@ -92,7 +96,7 @@ class Game:
                         self.player.move(self.tilemap, (self.player_movement[3] - self.player_movement[1], self.player_movement[2] - self.player_movement[0]), self)
 
                         # Check for collision between player and power-up
-                        if self.player.collision(self.power):
+                        if self.player.collision(self.power, self.background.camera_offset):
                             print("Power-up collected! Moving to a new position.")
                             self.power.randomize_position()
 
@@ -110,11 +114,16 @@ class Game:
                     if event.key == pygame.K_d or event.key == pygame.K_RIGHT:
                         self.player_movement[3] = False
 
-            # Recolor the background so it covers everything from the last frame
-            self.display.fill((0, 0, 0))
+            # Render the background
+# Update and render the scrolling background
+            self.background.update(self.player.position[1], self.display_height // 4, 0.45)  # Scrolls when player near top
+            self.background.render(self.display)
+
+# Render the player relative to the camera
+            self.player.render_relative(self.display, self.background.camera_offset)
 
             # Add all of the tiles for the background
-            self.tilemap.render(self.display)
+            self.tilemap.render(self.display, self.background.camera_offset)
             
             # moves the rectangle
             self.mover.move(self.display_width)
@@ -127,7 +136,7 @@ class Game:
                if self.player.rect().bottom <= self.mover.rect.bottom:
                     # move the player with the rectangle speed
                     self.player.position[0] += self.mover.speed
-            
+
             # Draw power-up at random positions
             self.power.draw(self.display)
 
