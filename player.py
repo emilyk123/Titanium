@@ -45,7 +45,7 @@ class Player:
                                 if self.health == 0:
                                     self.is_alive = False
                     if physics_rects[1][count] == 'end_tiles':
-                        print('end')
+                        game.load_level('level02.json', game.tilemap)
                 count += 1
     
     def render(self, surface):

@@ -87,13 +87,22 @@ class Game:
     
         # instance 
         self.mover = MovingRectangle(x=self.display_width, y=self.display_height - 80, width=64, height=16, speed=-2) 
-        self.mover1 = MovingRectangle(x=self.display_width, y=self.display_height - 128, width=64, height=16, speed=-2) 
+        self.mover1 = MovingRectangle(x=self.display_width, y=self.display_height - 128, width=64, height=16, speed=-2)
+    
+    def load_level(self, level, tilemap):
+        # Try to load level , if it's not there then load game without it
+        try:
+            tilemap.load(level)
+        except FileNotFoundError:
+            pass
 
     def run(self):
         # Set timer for player movement
         pygame.time.set_timer(self.player_move_event, 100)
         # Set timer to put a delay how fast the player can press menu buttons
         pygame.time.set_timer(self.menu_delay_event, 500)
+
+        self.load_level('level01.json', self.tilemap)
 
         while True:
             self.time = int((time.time() % 60) - self.start_time)
