@@ -19,7 +19,7 @@ class Player:
         # Returns player rect
         return pygame.Rect(self.position[0], self.position[1], self.size[0], self.size[1])
     
-    def move(self, tilemap, movement, game, mover_rect):
+    def move(self, tilemap, movement, game, mover_rects):
         if self.can_move:
             # position = [xPosition, yPosition]
             self.position[0] += movement[0] * 16
@@ -28,14 +28,19 @@ class Player:
             
             player_rect = self.rect()
             for rect in tilemap.physics_rects_around(self.position):
+                on_mover = False
                 # Checks if the player rect collided with one of rects in physics_rects_around
-                if player_rect.colliderect(rect) and not player_rect.colliderect(mover_rect):
-                    self.position = list(game.spawn_position)
-                    # If health isn't at zero, decrease the player health by 1 when player goes in water
-                    if self.health != 0:
-                        self.health -= 1
-                        if self.health == 0:
-                            self.is_alive = False
+                if player_rect.colliderect(rect):
+                    for mover in mover_rects:
+                        if player_rect.colliderect(mover):
+                            on_mover = True
+                    if not on_mover:
+                        self.position = list(game.spawn_position)
+                        # If health isn't at zero, decrease the player health by 1 when player goes in water
+                        if self.health != 0:
+                            self.health -= 1
+                            if self.health == 0:
+                                self.is_alive = False
     
     def render(self, surface):
         # Draw rectangle to the surface

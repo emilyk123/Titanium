@@ -82,6 +82,7 @@ class Game:
     
         # instance 
         self.mover = MovingRectangle(x=self.display_width, y=self.display_height - 80, width=64, height=16, speed=-2) 
+        self.mover1 = MovingRectangle(x=self.display_width, y=self.display_height - 128, width=64, height=16, speed=-2) 
 
     def run(self):
         # Set timer for player movement
@@ -118,7 +119,7 @@ class Game:
                             self.player_movement[3] = True
                         # Subtract player_movement[3] (Right) from player_movement[1] (Left) to get horizontal direction
                         # Subtract player_movement[2] (Down) from player_movement[0] (Up) to get vertical direction
-                        self.player.move(self.tilemap, (self.player_movement[3] - self.player_movement[1], self.player_movement[2] - self.player_movement[0]), self, self.mover.rect)
+                        self.player.move(self.tilemap, (self.player_movement[3] - self.player_movement[1], self.player_movement[2] - self.player_movement[0]), self, [self.mover.rect, self.mover1.rect])
                         # Check for collision between player and power-up
                         if self.player.collision(self.power):
                             print("Power-up collected! Moving to a new position.")
@@ -185,15 +186,22 @@ class Game:
                 
                 # moves the rectangle
                 self.mover.move(self.display_width)
+                self.mover1.move(self.display_width)
         
                 # draws the rectangle and color red
                 self.mover.draw(self.display, "RED")
+                self.mover1.draw(self.display, "RED")
                 # if player collides with rectangle move along with the rectangle
                 if self.player.rect().colliderect(self.mover.rect):
                     if self.player.rect().bottom <= self.mover.rect.bottom:
                             # move the player with the rectangle speed
                             self.player.position[0] += self.mover.speed
                 
+                if self.player.rect().colliderect(self.mover1.rect):
+                    if self.player.rect().bottom <= self.mover1.rect.bottom:
+                            # move the player with the rectangle speed
+                            self.player.position[0] += self.mover1.speed
+
                 # Draw power-up at random positions
                 self.power.draw(self.display)
                 # Draw the player at its current location to the screen
