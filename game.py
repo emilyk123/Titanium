@@ -1,9 +1,11 @@
 # Used tutorial https://www.youtube.com/watch?v=2gABYM5M0ww&list=LL&index=5&t=2735s&ab_channel=DaFluffyPotato
 # How to create custom events: https://stackoverflow.com/questions/24475718/pygame-custom-event
 # How to create a timer: https://www.pygame.org/docs/ref/time.html#pygame.time.set_timer
+# https://pygame.readthedocs.io/en/latest/4_text/text.html (How to put text on the screen for time)
 
 import sys
 import pygame
+import time
 from player import Player
 from tilemap import Tilemap
 from object import MovingRectangle
@@ -74,6 +76,9 @@ class Game:
 
         self.can_click_button = True
 
+        self.start_time = time.time() % 60
+        self.time = 0
+
         # Try to load level 1, if it's not there then load game without it
         try:
             self.tilemap.load('level01.json')
@@ -91,6 +96,7 @@ class Game:
         pygame.time.set_timer(self.menu_delay_event, 500)
 
         while True:
+            self.time = int((time.time() % 60) - self.start_time)
             # Checks all key and mouse presses
             for event in pygame.event.get():
                 # Pressing the red x at the corner or the window closes the game
@@ -208,6 +214,11 @@ class Game:
                 self.player.render(self.display)
                 # Draw squares in top right corner to display the player's health
                 self.tilemap.draw_health(self.display, self.player)
+
+                # Draw text for the timer
+                font = pygame.font.SysFont('Consolas', 16)
+                img = font.render('Time: ' + str(self.time), True, pygame.Color(0, 0, 0))
+                self.display.blit(img, (0, 0))
                 
             # Blit the screen, display, with all of the sprites on to the screen
             # The display is smaller than the screen so it scales up the size of everything in the display
