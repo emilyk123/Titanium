@@ -35,6 +35,7 @@ class Editor:
         # Each key in the assets dictionary is the group name and the values are the variants of the group
         self.assets = {
             'ground': load_images('ground'),
+            'end_tiles': load_images('end_tiles'),
             'water': load_images('water'),
         }
 
@@ -43,7 +44,7 @@ class Editor:
 
         # Checks to see if the file exists, if not then it doesn't load the map
         try:
-            self.tilemap.load('map.json')
+            self.tilemap.load('level01.json')
         except FileNotFoundError:
             pass
 
@@ -67,7 +68,8 @@ class Editor:
 
         # Stores rects for display rects to if a mouse clicks one of them
         self.display_rects = {0: [],
-                              1: []}
+                              1: [],
+                              2: []}
 
         # Stores the mouse's current position
         self.mpos = pygame.mouse.get_pos()
@@ -87,8 +89,11 @@ class Editor:
                 # If current tile group is ground, then append the tile to the display_rects
                 if tile_group == 'ground':
                     self.display_rects[0].append({variant: pygame.Rect(tiles_display_x_pos * 2 / RENDER_SCALE, 0, 16, 16)})
+                if tile_group == 'end_tiles':
+                    # variant count minus the length of the previous tile group
+                    self.display_rects[2].append({variant - len(self.assets[self.tile_list[0]]): pygame.Rect(tiles_display_x_pos * 2 / RENDER_SCALE, 0, 16, 16)})
                 else:
-                    self.display_rects[1].append({variant - len(self.assets[self.tile_list[0]]): pygame.Rect(tiles_display_x_pos * 2 / RENDER_SCALE, 0, 16, 16)})
+                    self.display_rects[2].append({variant - len(self.assets[self.tile_list[1]]): pygame.Rect(tiles_display_x_pos * 2 / RENDER_SCALE, 0, 16, 16)})
                 variant += 1
                 # Update the next tile's position
                 tiles_display_x_pos += 16
@@ -130,12 +135,19 @@ class Editor:
             if self.select_new_tile:
                 # Draws all of the tile options at top left screen
                 tiles_display_x_pos = 0
+                tiles_display_y_pos = 0
+                count = 0
                 # Loop through tile groups
                 for tile_group in self.tile_list:
                     # Loop through tile variants in the group
                     for variants in self.assets[tile_group]:
+                        # Loop the tiles so that they don't go off screen
+                        if count == 19:
+                            tiles_display_y_pos = 16
+                            tiles_display_x_pos = 0
                         # Draw the current tile to the screen
-                        self.display.blit(variants.copy(), (tiles_display_x_pos, 0))
+                        self.display.blit(variants.copy(), (tiles_display_x_pos, tiles_display_y_pos))
+                        count += 1
                         # Update the next tile's position
                         tiles_display_x_pos += 16
 
