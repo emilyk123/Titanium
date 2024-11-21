@@ -6,6 +6,7 @@
 import sys
 import pygame
 import time
+import random
 from player import Player
 from tilemap import Tilemap
 from object import MovingRectangle
@@ -14,7 +15,8 @@ from screen import MainMenu
 from screen import PauseMenu
 from screen import GameOver
 from utils import load_images
-
+from powerUpSpeed import SpeedPowerUP 
+from powerUpInvisble import InvisblePowerUp
 from enum import Enum
 
 class CurrentState(Enum):
@@ -86,6 +88,13 @@ class Game:
             self.tilemap.load('level01.json')
         except FileNotFoundError:
             pass
+
+        # Creating the powerup instances here
+        x, y = 100, 100  # Example initial positions for power-ups
+        self.invisble_powerUp = InvisblePowerUp(100,100)
+        self.speed_powerUp = SpeedPowerUP(200,150)
+
+        self.player_movement_delay = 100
     
         # instance
         # level 1
@@ -104,8 +113,8 @@ class Game:
             pass
 
     def run(self):
-        # Set timer for player movement
-        pygame.time.set_timer(self.player_move_event, 100)
+        # Set timer for player movement)
+        pygame.time.set_timer(self.player_move_event, self.player_movement_delay)
         # Set timer to put a delay how fast the player can press menu buttons
         pygame.time.set_timer(self.menu_delay_event, 500)
 
@@ -115,7 +124,7 @@ class Game:
             self.time = int((time.time() % 60) - self.start_time)
             # Checks all key and mouse presses
             for event in pygame.event.get():
-                # Pressing the red x at the corner or the window closes the game
+                # Pressing the red x at the corner of the window closes the game
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     sys.exit()
@@ -144,11 +153,15 @@ class Game:
                         # List of mover rects that the player is able to be on top of
                         self.player.move(self.tilemap, (self.player_movement[3] - self.player_movement[1], self.player_movement[2] - self.player_movement[0]), self, [self.mover.rect, self.mover1.rect, self.mover2, self.mover3])
                         # Check for collision between player and power-up
-                        if self.player.collision(self.power):
-                            print("Power-up collected! Moving to a new position.")
-                            self.power.randomize_position()
-                        # Don't allow player movement until timer has met time limit again
-                        self.player.can_move = False
+
+                        # if self.player.collision(self.power):
+                        #     print("Power-up collected! Moving to a new position.")
+                        #     self.power.randomize_position()
+
+                        # # Don't allow player movement until timer has met time limit again
+                        # self.player.can_move = False
+
+
                 if event.type == pygame.KEYUP:
                     # When keys are released, set player_movement back to false
                     if event.key == pygame.K_w or event.key == pygame.K_UP:
@@ -181,6 +194,7 @@ class Game:
                     pygame.quit()
                     sys.exit()
             
+
             elif self.current_state == CurrentState.Pause:
                 self.display.fill((255, 255, 255))
                 self.pause_menu.render(self.display)
@@ -230,6 +244,8 @@ class Game:
                     self.mover2.move(self.display_width)
                     self.mover3.move(self.display_width)
 
+                    # Draw squares in top right corner to display the player's health
+                    self.tilemap.draw_health(self.display, self.player)
                     self.mover2.draw(self.display, "RED")
                     self.mover3.draw(self.display, "RED")
 
@@ -241,7 +257,21 @@ class Game:
                         if self.player.rect().bottom <= self.mover3.rect.bottom:
                                 # move the player with the rectangle speed
                                 self.player.position[0] += self.mover3.speed
+                # Draw power-ups at their positions
+                self.invisble_powerUp.draw(self.display)
+                self.speed_powerUp.draw(self.display)
+                
+                # Check for collision with power-ups
+                if self.player.rect().colliderect(self.invisble_powerUp.rect):
+                    # print("Invisible Power-Up collected!")
+                    self.invisble_powerUp.randomize_position(self.display_width, self.display_height)
+                if self.player.rect().colliderect(self.speed_powerUp.rect):
+                    # print("Speed Power-Up collected!")
+                    self.speed_powerUp.randomize_position(self.display_width, self.display_height)
 
+                    # using player movement delay here
+                    self.speed_powerUp.speed_up(self)
+                    
                 # Draw power-up at random positions
                 self.power.draw(self.display)
                 # Draw the player at its current location to the screen
@@ -256,6 +286,7 @@ class Game:
                 
             # Blit the screen, display, with all of the sprites on to the screen
             # The display is smaller than the screen so it scales up the size of everything in the display
+            
             self.screen.blit(pygame.transform.scale(self.display, self.screen.get_size()), (0, 0))
 
             # Updates the display to show all changes made to the game
