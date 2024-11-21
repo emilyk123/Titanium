@@ -7,7 +7,7 @@ import json
 import pygame
 
 NEIGHBOR_OFFSETS = [(-1, 0), (-1, -1), (0, -1), (1, -1), (1, 0), (0, 0), (-1, 1), (0, 1), (1, 1)]
-PHYSICS_TILES = {'water'}
+PHYSICS_TILES = {'water', 'end_tiles'}
 
 class Tilemap:
     def __init__(self, game, tile_size=16):
@@ -40,13 +40,15 @@ class Tilemap:
     
     def physics_rects_around(self, pos):
         rects = []
+        type = []
         for tile in self.tiles_around(pos):
             # Checks if the tile type is in the PHYSICS_TILES list
             if tile['type'] in PHYSICS_TILES:
                 # Add the rect of the tile that is around the player to the rects list
                 rects.append(pygame.Rect(tile['pos'][0] * self.tile_size, tile['pos'][1] * self.tile_size, self.tile_size, self.tile_size))
+                type.append(tile['type'])
         # Returns list of rects that the player will interact with
-        return rects
+        return [rects, type]
     
     # Draws health bar and updates when player health is changed
     def draw_health(self, surface, player):
