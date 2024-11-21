@@ -79,6 +79,7 @@ class Editor:
 
         # Stores local value for the current x value position for the display tiles 
         tiles_display_x_pos = 0
+        tiles_display_y_pos = 0
         # Stores local value for the current variant
         variant = 0
 
@@ -86,14 +87,17 @@ class Editor:
         for tile_group in self.tile_list:
             # Loops through variants in tile groups
             for variants in self.assets[tile_group]:
+                if variant == 19:
+                    tiles_display_y_pos = 16
+                    tiles_display_x_pos = 0
                 # If current tile group is ground, then append the tile to the display_rects
                 if tile_group == 'ground':
-                    self.display_rects[0].append({variant: pygame.Rect(tiles_display_x_pos * 2 / RENDER_SCALE, 0, 16, 16)})
+                    self.display_rects[0].append({variant: pygame.Rect(tiles_display_x_pos * 2 / RENDER_SCALE, tiles_display_y_pos, 16, 16)})
                 if tile_group == 'end_tiles':
                     # variant count minus the length of the previous tile group
-                    self.display_rects[1].append({variant - len(self.assets[self.tile_list[0]]): pygame.Rect(tiles_display_x_pos * 2 / RENDER_SCALE, 0, 16, 16)})
+                    self.display_rects[1].append({variant - len(self.assets[self.tile_list[0]]): pygame.Rect(tiles_display_x_pos * 2 / RENDER_SCALE, tiles_display_y_pos, 16, 16)})
                 if tile_group == 'water':
-                    self.display_rects[2].append({variant - len(self.assets[self.tile_list[1]]): pygame.Rect(tiles_display_x_pos * 2 / RENDER_SCALE, 0, 16, 16)})
+                    self.display_rects[2].append({variant - len(self.assets[self.tile_list[1]]): pygame.Rect(tiles_display_x_pos * 2 / RENDER_SCALE, tiles_display_y_pos, 16, 16)})
                 variant += 1
                 # Update the next tile's position
                 tiles_display_x_pos += 16
