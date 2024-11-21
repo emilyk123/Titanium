@@ -2,6 +2,12 @@
 
 ## Resources
 
+# Assets Used
+    # Dird and Grass Tilemaps
+        # https://bagong-games.itch.io/topdown-tileset
+    # Water Tilemap
+        # https://beeler.itch.io/top-down-earth-tileset
+
 # Used to help set up project, player, and tilemap
     # https://www.youtube.com/watch?v=2gABYM5M0ww&t=2642s&ab_channel=DaFluffyPotato
     # Window and Game

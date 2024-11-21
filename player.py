@@ -13,6 +13,7 @@ class Player:
         self.health = 3
         self.width = 16  # width of the player
         self.height = 16  # height of the player
+        self.is_alive = True
 
        # power up general 
         self.base_speed = 5
@@ -26,7 +27,7 @@ class Player:
         # Returns player rect
         return pygame.Rect(self.position[0], self.position[1], self.size[0], self.size[1])
     
-    def move(self, tilemap, movement, game):
+    def move(self, tilemap, movement, game, mover_rects):
         if self.can_move:
             # position = [xPosition, yPosition]
             self.position[0] += movement[0] * 16
@@ -34,13 +35,28 @@ class Player:
             self.position[1] += movement[1] * 16
             
             player_rect = self.rect()
-            for rect in tilemap.physics_rects_around(self.position):
+            physics_rects = tilemap.physics_rects_around(self.position)
+            count = 0
+            for rect in physics_rects[0]:
+                on_mover = False
                 # Checks if the player rect collided with one of rects in physics_rects_around
                 if player_rect.colliderect(rect):
-                    self.position = list(game.spawn_position)
-                    # If health isn't at zero, decrease the player health by 1 when player goes in water
-                    if self.health != 0:
-                        self.health -= 1
+                    if physics_rects[1][count] == 'water':
+                        for mover in mover_rects:
+                            if player_rect.colliderect(mover):
+                                on_mover = True
+                        if not on_mover:
+                            self.position = list(game.spawn_position)
+                            # If health isn't at zero, decrease the player health by 1 when player goes in water
+                            if self.health != 0:
+                                self.health -= 1
+                                if self.health == 0:
+                                    self.is_alive = False
+                    if physics_rects[1][count] == 'end_tiles':
+                        game.load_level('level02.json', game.tilemap)
+                        game.current_level = 2
+                        self.position = list(game.spawn_position)
+                count += 1
     
     def render(self, surface):
         # Draw rectangle to the surface
