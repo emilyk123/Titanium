@@ -91,8 +91,8 @@ class Editor:
                     self.display_rects[0].append({variant: pygame.Rect(tiles_display_x_pos * 2 / RENDER_SCALE, 0, 16, 16)})
                 if tile_group == 'end_tiles':
                     # variant count minus the length of the previous tile group
-                    self.display_rects[2].append({variant - len(self.assets[self.tile_list[0]]): pygame.Rect(tiles_display_x_pos * 2 / RENDER_SCALE, 0, 16, 16)})
-                else:
+                    self.display_rects[1].append({variant - len(self.assets[self.tile_list[0]]): pygame.Rect(tiles_display_x_pos * 2 / RENDER_SCALE, 0, 16, 16)})
+                if tile_group == 'water':
                     self.display_rects[2].append({variant - len(self.assets[self.tile_list[1]]): pygame.Rect(tiles_display_x_pos * 2 / RENDER_SCALE, 0, 16, 16)})
                 variant += 1
                 # Update the next tile's position
