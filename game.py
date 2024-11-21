@@ -41,6 +41,8 @@ class Game:
         self.main_menu = MainMenu(self)
         self.pause_menu = PauseMenu(self)
         self.game_over = GameOver(self)
+
+        self.current_level = 1
         
         # Create game window
         self.display = pygame.Surface((self.display_width, self.display_height))
@@ -85,9 +87,14 @@ class Game:
         except FileNotFoundError:
             pass
     
-        # instance 
-        self.mover = MovingRectangle(x=self.display_width, y=self.display_height - 80, width=64, height=16, speed=-2) 
+        # instance
+        # level 1
+        self.mover = MovingRectangle(x=self.display_width, y=self.display_height - 80, width=64, height=16, speed=-3) 
         self.mover1 = MovingRectangle(x=self.display_width, y=self.display_height - 128, width=64, height=16, speed=-2)
+
+        # level 2
+        self.mover2 = MovingRectangle(x=self.display_width, y=self.display_height - 96, width=64, height=16, speed=-2)
+        self.mover3 = MovingRectangle(x=self.display_width, y=self.display_height - 208, width=64, height=16, speed=-2)
     
     def load_level(self, level, tilemap):
         # Try to load level , if it's not there then load game without it
@@ -134,7 +141,8 @@ class Game:
                             self.player_movement[3] = True
                         # Subtract player_movement[3] (Right) from player_movement[1] (Left) to get horizontal direction
                         # Subtract player_movement[2] (Down) from player_movement[0] (Up) to get vertical direction
-                        self.player.move(self.tilemap, (self.player_movement[3] - self.player_movement[1], self.player_movement[2] - self.player_movement[0]), self, [self.mover.rect, self.mover1.rect])
+                        # List of mover rects that the player is able to be on top of
+                        self.player.move(self.tilemap, (self.player_movement[3] - self.player_movement[1], self.player_movement[2] - self.player_movement[0]), self, [self.mover.rect, self.mover1.rect, self.mover2, self.mover3])
                         # Check for collision between player and power-up
                         if self.player.collision(self.power):
                             print("Power-up collected! Moving to a new position.")
@@ -199,23 +207,40 @@ class Game:
                 # Add all of the tiles for the background
                 self.tilemap.render(self.display)
                 
-                # moves the rectangle
-                self.mover.move(self.display_width)
-                self.mover1.move(self.display_width)
-        
-                # draws the rectangle and color red
-                self.mover.draw(self.display, "RED")
-                self.mover1.draw(self.display, "RED")
-                # if player collides with rectangle move along with the rectangle
-                if self.player.rect().colliderect(self.mover.rect):
-                    if self.player.rect().bottom <= self.mover.rect.bottom:
-                            # move the player with the rectangle speed
-                            self.player.position[0] += self.mover.speed
+                if self.current_level == 1:
+                    # moves the rectangle
+                    self.mover.move(self.display_width)
+                    self.mover1.move(self.display_width)
+
+                    # draws the rectangle and color red
+                    self.mover.draw(self.display, "RED")
+                    self.mover1.draw(self.display, "RED")
+                    # if player collides with rectangle move along with the rectangle
+                    if self.player.rect().colliderect(self.mover.rect):
+                        if self.player.rect().bottom <= self.mover.rect.bottom:
+                                # move the player with the rectangle speed
+                                self.player.position[0] += self.mover.speed
+                    
+                    if self.player.rect().colliderect(self.mover1.rect):
+                        if self.player.rect().bottom <= self.mover1.rect.bottom:
+                                # move the player with the rectangle speed
+                                self.player.position[0] += self.mover1.speed
                 
-                if self.player.rect().colliderect(self.mover1.rect):
-                    if self.player.rect().bottom <= self.mover1.rect.bottom:
-                            # move the player with the rectangle speed
-                            self.player.position[0] += self.mover1.speed
+                if self.current_level == 2:
+                    self.mover2.move(self.display_width)
+                    self.mover3.move(self.display_width)
+
+                    self.mover2.draw(self.display, "RED")
+                    self.mover3.draw(self.display, "RED")
+
+                    if self.player.rect().colliderect(self.mover2.rect):
+                        if self.player.rect().bottom <= self.mover2.rect.bottom:
+                                # move the player with the rectangle speed
+                                self.player.position[0] += self.mover2.speed
+                    if self.player.rect().colliderect(self.mover3.rect):
+                        if self.player.rect().bottom <= self.mover3.rect.bottom:
+                                # move the player with the rectangle speed
+                                self.player.position[0] += self.mover3.speed
 
                 # Draw power-up at random positions
                 self.power.draw(self.display)
