@@ -44,7 +44,7 @@ class Editor:
 
         # Checks to see if the file exists, if not then it doesn't load the map
         try:
-            self.tilemap.load('level01.json')
+            self.tilemap.load('map.json')
         except FileNotFoundError:
             pass
 

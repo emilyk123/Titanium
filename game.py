@@ -31,7 +31,7 @@ class Game:
         self.display_width = 320
         self.display_height = 240
 
-        self.spawn_position = (self.display_width / 2, self.display_height - 16)
+        self.spawn_position = (self.display_width / 2, self.display_height - 32)
 
         # Keeps track of which state the player is at in the game
         self.current_state = CurrentState.MainMenu
@@ -64,6 +64,7 @@ class Game:
         # Game Tile Sprites
         self.assets = {
             'ground': load_images('ground'),
+            'end_tiles': load_images('end_tiles'),
             'water': load_images('water'),
             'health': load_images('health')
         }
@@ -80,7 +81,7 @@ class Game:
             pass
     
         # instance 
-        self.mover = MovingRectangle(x=self.display_width, y=64, width=64, height=16, speed=-2) 
+        self.mover = MovingRectangle(x=self.display_width, y=self.display_height - 80, width=64, height=16, speed=-2) 
 
     def run(self):
         # Set timer for player movement
@@ -117,7 +118,7 @@ class Game:
                             self.player_movement[3] = True
                         # Subtract player_movement[3] (Right) from player_movement[1] (Left) to get horizontal direction
                         # Subtract player_movement[2] (Down) from player_movement[0] (Up) to get vertical direction
-                        self.player.move(self.tilemap, (self.player_movement[3] - self.player_movement[1], self.player_movement[2] - self.player_movement[0]), self)
+                        self.player.move(self.tilemap, (self.player_movement[3] - self.player_movement[1], self.player_movement[2] - self.player_movement[0]), self, self.mover.rect)
                         # Check for collision between player and power-up
                         if self.player.collision(self.power):
                             print("Power-up collected! Moving to a new position.")
