@@ -35,8 +35,6 @@ class Game:
 
         self.tilemap = Tilemap(self)
         #--------initialize tilemap
-        self.power = PowerUp(self.display_width, self.display_height, self.tilemap)
-        #--------added self.tilemap in parameters
 
         # Create player player at spawn position
         self.player = Player(self.spawn_position)
@@ -59,6 +57,9 @@ class Game:
             self.tilemap.load('level01.json')
         except FileNotFoundError:
             pass
+        
+        self.power = PowerUp(self.display_width, self.display_height, self.tilemap)
+        #--------added self.tilemap in parameters
     
         # instance 
         self.mover = MovingRectangle(x=self.display_width, y=64, width=64, height=16, speed=-2) 
