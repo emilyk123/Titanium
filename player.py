@@ -13,6 +13,7 @@ class Player:
         self.health = 3
         self.width = 16  # width of the player
         self.height = 16  # height of the player
+        
 
     def rect(self):
         # Returns player rect

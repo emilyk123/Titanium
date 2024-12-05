@@ -33,14 +33,19 @@ class Game:
         # [Up, Left, Down, Right]
         self.player_movement = [False, False, False, False]
 
+        self.tilemap = Tilemap(self)
+        #--------initialize tilemap
+        self.power = PowerUp(self.display_width, self.display_height, self.tilemap)
+        #--------added self.tilemap in parameters
+
         # Create player player at spawn position
         self.player = Player(self.spawn_position)
         
         # Create power-up with random positioning logic
-        self.power = PowerUp(self.display_width, self.display_height)
+        #self.power = PowerUp(self.display_width, self.display_height, self)
 
         # Initialize the tilemap
-        self.tilemap = Tilemap(self)
+        # self.tilemap = Tilemap(self)
 
         # Game Tile Sprites
         self.assets = {
