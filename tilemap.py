@@ -82,3 +82,23 @@ class Tilemap:
         for loc in self.tilemap:
             tile = self.tilemap[loc]
             surface.blit(self.game.assets[tile['type']][tile['variant']], (tile['pos'][0] * self.tile_size, tile['pos'][1] * self.tile_size))
+
+
+#-----  # Match the format used in self.tilemap
+    def get_tile(self, position):
+    # Converts the (x, y) pixel position to the tile coordinate
+        tile_x = position[0] // self.tile_size
+        tile_y = position[1] // self.tile_size
+        tile_loc = f"{tile_x};{tile_y}"
+        return self.tilemap.get(tile_loc)
+
+
+    def get_tile_type(self, position):
+        tile = self.get_tile(position)
+        if tile:
+            return tile.get('type', None)
+        return None
+
+            # Fetch the tile at a specific position and return its type if it exists
+            # Safely fetch the 'type' key, return None if missing
+            # Fetch the tile at a specific position and return its type if it exists
