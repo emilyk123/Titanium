@@ -18,6 +18,8 @@ from utils import load_images
 from powerUpSpeed import SpeedPowerUP 
 from powerUpInvisble import InvisblePowerUp
 from enum import Enum
+from background import Background
+from camera import Camera
 
 class CurrentState(Enum):
     MainMenu = 1
@@ -69,6 +71,12 @@ class Game:
 
         # Initialize the tilemap
         # self.tilemap = Tilemap(self)
+
+        # Initialize Camera
+        self.camera = Camera(self.display_width, self.display_height)
+
+        # Initialize Background
+        self.background = Background((135, 206, 250), (self.display_width, self.display_height))
 
         # Game Tile Sprites
         self.assets = {
@@ -220,10 +228,18 @@ class Game:
                     sys.exit()
             
             elif self.current_state == CurrentState.Game:
-                # Recolor the background so it covers everything from the last frame
-                self.display.fill((106, 183, 215))
-                # Add all of the tiles for the background
-                self.tilemap.render(self.display)
+                # # Recolor the background so it covers everything from the last frame
+                # self.display.fill((106, 183, 215))
+                # # Add all of the tiles for the background
+                # self.tilemap.render(self.display)
+
+                # Update the camera's position based on the player's position
+                self.camera.update(self.player.position[0], self.player.position[1])
+
+                # Render the game elements relative to the camera
+                self.background.render(self.display, self.camera)
+                self.tilemap.render(self.display, self.camera)
+                self.player.render_relative(self.display, self.camera)
                 
                 if self.current_level == 1:
                     # moves the rectangle
@@ -231,8 +247,10 @@ class Game:
                     self.mover1.move(self.display_width)
 
                     # draws the rectangle and color red
-                    self.mover.draw(self.display, "RED")
-                    self.mover1.draw(self.display, "RED")
+                    self.mover.draw(self.display, "RED", self.camera)
+                    self.mover1.draw(self.display, "RED", self.camera)
+
+
                     # if player collides with rectangle move along with the rectangle
                     if self.player.rect().colliderect(self.mover.rect):
                         if self.player.rect().bottom <= self.mover.rect.bottom:
@@ -250,8 +268,8 @@ class Game:
 
                     # Draw squares in top right corner to display the player's health
                     self.tilemap.draw_health(self.display, self.player)
-                    self.mover2.draw(self.display, "RED")
-                    self.mover3.draw(self.display, "RED")
+                    self.mover2.draw(self.display, "RED", self.camera)
+                    self.mover3.draw(self.display, "RED", self.camera)
 
                     if self.player.rect().colliderect(self.mover2.rect):
                         if self.player.rect().bottom <= self.mover2.rect.bottom:

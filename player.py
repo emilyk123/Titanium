@@ -70,3 +70,9 @@ class Player:
             self.position[1] < power_up.y + power_up.height and
             self.position[1] + self.height > power_up.y
         )
+    def render_relative(self, surface, camera):
+        pygame.draw.rect(
+            surface,
+            pygame.Color(0, 255, 0),
+            pygame.Rect(self.position[0] - camera.x, self.position[1] - camera.y, self.width, self.height)
+    )

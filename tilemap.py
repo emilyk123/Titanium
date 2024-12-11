@@ -38,7 +38,7 @@ class Tilemap:
                 tiles.append(self.tilemap[check_loc])
         return tiles
     
-    def physics_rects_around(self, pos):
+    def physics_rects_around(self, pos, camera_offset=0): # added third argument 
         rects = []
         type = []
         for tile in self.tiles_around(pos):
@@ -78,10 +78,10 @@ class Tilemap:
         self.tilemap = map_data['tilemap']
         self.tile_size = map_data['tile_size']
 
-    def render(self, surface):
+    def render(self, surface, camera):
         for loc in self.tilemap:
             tile = self.tilemap[loc]
-            surface.blit(self.game.assets[tile['type']][tile['variant']], (tile['pos'][0] * self.tile_size, tile['pos'][1] * self.tile_size))
+            surface.blit(self.game.assets[tile['type']][tile['variant']], (tile['pos'][0] * self.tile_size - camera.x, tile['pos'][1] * self.tile_size - camera.y))
 
 
 #-----  # Match the format used in self.tilemap

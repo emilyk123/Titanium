@@ -16,7 +16,12 @@ class MovingRectangle:
         if self.rect.right < 0: 
             self.rect.x = width
 
-    def draw(self, screen, color):
-        # draws rec on screen
+    def draw(self, screen, color, camera):
+         # draws rec on screen
         pygame.draw.rect(screen, color, self.rect)
+
+    # def draw(self, screen, color, camera):
+    #     adjusted_rect = self.rect.move(-camera.x, -camera.y)
+    #     pygame.draw.rect(screen, color, adjusted_rect)
+
     
