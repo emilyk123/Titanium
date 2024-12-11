@@ -9,6 +9,7 @@ class Background:
         self.scrolling = False  # Scrolling starts inactive
 
     def update(self, player_y, threshold, scroll_speed, camera_y):
+        
         if self.scrolling:
             self.float_camera_offset -= scroll_speed
             self.camera_offset = int(camera_y)
