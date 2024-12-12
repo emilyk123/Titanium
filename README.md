@@ -19,6 +19,7 @@
 ## Camera 
 - As the player moves, the camera follows the player’s movements
 - The camera has a x and y-axis
+- Once the player reaches the top level, the camera and player reset to the bottom of the screen for the next level.
 
 ## Power-up
 - The player intersects power-up on all sides and spawns randomly
