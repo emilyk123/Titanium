@@ -18,7 +18,7 @@
 
 ## Camera 
 - As the player moves, the camera follows the player’s movements
-- The camera has a x and y-axis
+- The camera has a x and y-axis, so when the player moves side-to-side or up-and-down the camera moves too. 
 - Once the player reaches the top level, the camera and player reset to the bottom of the screen for the next level.
 
 ## Power-up
