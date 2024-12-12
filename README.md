@@ -1,5 +1,7 @@
 # Titanium
 
+![titanium](https://github.com/user-attachments/assets/1e8994d2-c293-493a-b758-25e2cc4715c3)
+
 ## About 
 *  Titanium is a game made in Python using the pygame library, and it is inspired by the game Frogger.
 
