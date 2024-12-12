@@ -30,7 +30,7 @@
 # Resources
 
 ## Assets Used
-    # Dird and Grass Tilemaps
+    # Dirt and Grass Tilemaps
         # https://bagong-games.itch.io/topdown-tileset
     # Water Tilemap
         # https://beeler.itch.io/top-down-earth-tileset
